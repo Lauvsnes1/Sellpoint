@@ -3,7 +3,7 @@ export default function Test2() {
     return (
         <h1 className="title">
             Read{" "}
-            <Link href="/test.js">
+            <Link href="/test">
                 <a>
                 Tilbake  til den andre siden igjen
                 </a>
