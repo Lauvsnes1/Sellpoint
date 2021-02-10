@@ -10,6 +10,16 @@ export default function Test() {
                 </a>
             </Link>
         </h3>
+
+        <style jsx>{`
+
+            .link {
+                color: green;
+            }
+
+            `}
+
+        </style>
         </>
     )
     
