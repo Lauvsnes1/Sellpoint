@@ -4,7 +4,6 @@ export default function Test() {
         <>
         <h1>Test123</h1>,
         <h3 className="link">
-            Read{' '}
             <Link href="/test2">
                 <a>
                     Gå til andre siden
