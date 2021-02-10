@@ -15,7 +15,7 @@ export default function Test2() {
 
             .title {
                 color: red;
-                font: broadway
+                font-style: Broadway
             }
 
             `}
