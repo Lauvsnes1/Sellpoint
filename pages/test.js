@@ -15,6 +15,7 @@ export default function Test() {
 
             .link {
                 color: green;
+                font: algerian
             }
 
             `}

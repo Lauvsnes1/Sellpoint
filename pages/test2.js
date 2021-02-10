@@ -10,6 +10,17 @@ export default function Test2() {
             </Link>
         </h1>,
         <h3>Mindre overskrift</h3>
+
+        <style jsx>{`
+
+            .title {
+                color: red;
+                font: broadway
+            }
+
+            `}
+
+        </style>
         </>
     )
     
