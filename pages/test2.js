@@ -1,8 +1,9 @@
 import Link from "next/link"
 export default function Test2() {
     return (
+        <>
         <h1 className="title">
-            Read{" "}
+            Read{' '}
             <Link href="/test">
                 <a>
                 Tilbake  til den andre siden igjen
@@ -10,6 +11,7 @@ export default function Test2() {
             </Link>
         </h1>,
         <h3>Mindre overskrift</h3>
+        </>
     )
     
 
