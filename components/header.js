@@ -5,33 +5,46 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
+import { colors, ThemeProvider } from '@material-ui/core';
 
 
 const useStyles = makeStyles((theme) => ({
     root: {
       flexGrow: 1,
-      width: 1440,
+      width: 'full',
       position: 'relative',
+      color: 'transparent'
     },
     
     title: {
-      flexGrow: 1,
+      flex: 3,
     },
+    button: {
+        padding: 3,
+        flex: 1,
+        marginLeft: 20,
+        
+        
+
+    }
   }));
+
+
   
   export default function ButtonAppBar() {
     const classes = useStyles();
 
     return (
         <div className={classes.root}>
-          <AppBar position="static">
+          <AppBar color='primary' variant= 'elevated'>
             <Toolbar>
-              <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
-              </IconButton>
               <Typography variant="h6" className={classes.title}>
                 Logo(bonde mekker)
               </Typography>
-              <Button color="inherit">Login</Button>
+              <Button className = {classes.button}> Hjem</Button>
+              <Button className = {classes.button}> Mine annonser</Button>
+              <Button className = {classes.button}> Mine favoritter</Button>
+              <Button className = {classes.button} variant = 'outlined' color='secondary'> My Profile</Button>
             </Toolbar>
           </AppBar>
         </div>
