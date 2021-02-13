@@ -1,9 +1,16 @@
 import { useState } from "react";
 import fire from "../../config/fire-config";
 import { useRouter } from "next/router";
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
+
+const buttonStyle = {
+  color: "#C6FF00",
+  borderColor: "#C6FF00",
+};
 
 const Login = () => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [notify, setNotification] = useState("");
   const router = useRouter();
@@ -12,7 +19,8 @@ const Login = () => {
     e.preventDefault();
     fire
       .auth()
-      .signInWithEmailAndPassword(username, password)
+      .signInWithEmailAndPassword(email, password)
+      .then(() => router.push("/"))
       .catch((err) => {
         console.log(err.code, err.message);
         setNotification(err.message);
@@ -20,31 +28,41 @@ const Login = () => {
           setNotification("");
         }, 2000);
       });
-    setUsername("");
+    setEmail("");
     setPassword("");
-    router.push("/");
   };
 
   return (
     <div>
       <h1>Login</h1>
-      {notify}
       <form onSubmit={handleLogin}>
-        Email
-        <input
-          type="text"
-          value={username}
-          onChange={({ target }) => setUsername(target.value)}
-        />
-        <br />
-        Password
-        <input
-          type="password"
-          value={password}
-          onChange={({ target }) => setPassword(target.value)}
-        />
-        <br />
-        <button type="submit">Login</button>
+        <div className="textfield">
+          <TextField
+            required
+            value={email}
+            onChange={({ target }) => setEmail(target.value)}
+            id="outlined-required"
+            label="Email"
+            variant="outlined"
+          />
+        </div>
+        <div className="textfield">
+          <TextField
+            required
+            value={password}
+            onChange={({ target }) => setPassword(target.value)}
+            id="outlined-password-input"
+            label="Password"
+            type="password"
+            autoComplete="current-password"
+            variant="outlined"
+            error={notify != ""}
+            helperText={notify}
+          />
+        </div>
+        <Button style={buttonStyle} variant="outlined" type="submit">
+          Register
+        </Button>
       </form>
     </div>
   );
