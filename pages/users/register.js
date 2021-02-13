@@ -4,8 +4,15 @@ import { useRouter } from "next/router";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 
+const buttonStyle = {
+  color: "#C6FF00",
+  borderColor: "#C6FF00",
+};
+
 const Register = () => {
   const router = useRouter();
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [userName, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [passConf, setPassConf] = useState("");
@@ -58,6 +65,27 @@ const Register = () => {
       <form onSubmit={handleLogin}>
         <div className="textfield">
           <TextField
+            required
+            value={firstName}
+            onChange={({ target }) => setFirstName(target.value)}
+            id="outlined-required"
+            label="First name"
+            variant="outlined"
+          />
+        </div>
+        <div className="textfield">
+          <TextField
+            required
+            value={lastName}
+            onChange={({ target }) => setLastName(target.value)}
+            id="outlined-required"
+            label="Last name"
+            variant="outlined"
+          />
+        </div>
+        <div className="textfield">
+          <TextField
+            required
             value={userName}
             onChange={({ target }) => setUsername(target.value)}
             id="outlined-required"
@@ -67,6 +95,7 @@ const Register = () => {
         </div>
         <div className="textfield">
           <TextField
+            required
             value={password}
             onChange={({ target }) => setPassword(target.value)}
             id="outlined-password-input"
@@ -78,6 +107,7 @@ const Register = () => {
         </div>
         <div className="textfield">
           <TextField
+            required
             value={passConf}
             onChange={({ target }) => setPassConf(target.value)}
             id="outlined-password-confirmation-input"
@@ -88,7 +118,7 @@ const Register = () => {
           />
         </div>
         <div className="button">
-          <Button variant="outlined" color="primary" type="submit">
+          <Button style={buttonStyle} variant="outlined" type="submit">
             Register
           </Button>
         </div>
