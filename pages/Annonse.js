@@ -1,9 +1,12 @@
 import Head from 'next/head'
 import Link from "next/link"
 import Image from "next/image"
+import Layout from '../components/layout'
+
 export default function Test2() {
     return (
         <>
+        <Layout>
         <Head>
             <title>Annonse-Spisebord</title>
         </Head>
@@ -15,13 +18,11 @@ export default function Test2() {
                 Tilbake til forsiden
                 </a>
             </Link>
-        </h2>,
+        </h2>
+        </Layout>,
         <style jsx>{`
 
-            .title {
-                color: red;
-                font-style: Broadway
-            }
+            
 
             `}
 

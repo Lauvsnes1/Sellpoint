@@ -1,10 +1,14 @@
 import Head from 'next/head'
 import Link from "next/link"
 import Image from "next/image"
+import Layout from '../components/layout'
+import utilStyles from "../styles/utils.module.css"
+
 export default function Test() {
     return (
         <>
-        <Head>
+        <Layout>
+        <Head className={utilStyles.headingLg}>
             <title>Sellpoint - Forside</title>
         </Head>
         <h2 className="title">
@@ -22,12 +26,10 @@ export default function Test() {
                 </a>
             </Link>
         </h3>
+        </Layout>
         <style jsx>{`
 
-            .link {
-                color: green;
-                font-style: Algerian
-            }
+            
 
             `}
 
