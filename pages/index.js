@@ -2,7 +2,7 @@ import Head from 'next/head'
 import Link from "next/link"
 import Image from "next/image"
 import Layout from '../components/layout'
-import utilStyles from "../styles/utils.module.css"
+import utilStyles from "../styles/utils.module"
 
 export default function Test() {
     return (
