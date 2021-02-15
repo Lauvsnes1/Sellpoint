@@ -10,7 +10,7 @@ export default function Test() {
         <Layout>
         <div className={utilStyles.heading2Xl}>
         <Head>
-            <title>Sellpoint - Forside</title>
+            <title className={utilStyles.colorInherit}>Sellpoint - Forside</title>
         </Head>
         </div>
         <h2 className="title">
