@@ -4,11 +4,6 @@ import { useRouter } from "next/router";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 
-const buttonStyle = {
-  color: "#C6FF00",
-  borderColor: "#C6FF00",
-};
-
 const Register = () => {
   const router = useRouter();
   const [firstName, setFirstName] = useState("");
@@ -138,7 +133,7 @@ const Register = () => {
           />
         </div>
         <div className="button">
-          <Button style={buttonStyle} variant="outlined" type="submit">
+          <Button color='secondary' variant="outlined" type="submit">
             Register
           </Button>
         </div>

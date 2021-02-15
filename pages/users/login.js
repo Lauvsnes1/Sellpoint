@@ -3,11 +3,7 @@ import fire from "../../config/fire-config";
 import { useRouter } from "next/router";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-
-const buttonStyle = {
-  color: "#C6FF00",
-  borderColor: "#C6FF00",
-};
+import Link from "next/link";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -34,6 +30,29 @@ const Login = () => {
 
   return (
     <div>
+      <style jsx>{`
+        div {
+          display: flex;
+          flex-direction: column;
+          margin: auto;
+        }
+        form {
+          max-width: 200px;
+          margin: auto;
+        }
+        .textfield {
+          margin: 20px 0;
+        }
+        h1 {
+          text-align: center;
+        }
+        .button {
+          margin: auto;
+        }
+        a {
+            text-decoration: none;
+        }
+      `}</style>
       <h1>Login</h1>
       <form onSubmit={handleLogin}>
         <div className="textfield">
@@ -60,9 +79,16 @@ const Login = () => {
             helperText={notify}
           />
         </div>
-        <Button style={buttonStyle} variant="outlined" type="submit">
-          Register
+        <Button color="secondary" variant="contained" type="submit">
+          Log in
         </Button>
+        <Link href="register">
+          <a>
+            <Button color="secondary" variant="outlined">
+              Register
+            </Button>
+          </a>
+        </Link>
       </form>
     </div>
   );
