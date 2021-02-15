@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import fire from "../config/fire-config";
 import { useRouter } from "next/router";
+import uniqid from "uniqid";
 
 const CreatePost = () => {
   //Forstår ikke bilde greiene helt :/ Hentet fra
@@ -10,6 +11,8 @@ const CreatePost = () => {
   const image = useRef(null);
   //Place er bare en streng nå, må sette opp google
   //maps ting etterhvert
+
+  const [title, setTitle] = useState("");
   const [place, setPlace] = useState("");
   const [price, setPrice] = useState(0);
   const [description, setDescription] = useState("");
@@ -34,26 +37,48 @@ const CreatePost = () => {
   //Bli på siden og gi feilmelding hvis annonsen ikke er fylt ut
   const handleSubmit = (e) => {
     e.preventDefault();
-
     //Må endre det her til at
     const user = fire.auth().currentUser;
 
     if (!user) {
-      setNotification("You have to login first!");
-      return;
+      setNotification("Du må logge inn først!");
+      //return;
     }
+
+    //Legge bildet til i storage
+    // andre navn kanskje?
+    console.log(image.current);
+    var ref = "/images/" + uniqid();
+    fire.storage().ref(ref).put();
 
     //TODO: Kode for å legge til annonse i database
 
-    router.push("/");
+    var document = fire.firestore().collection("posts").add({
+      title: title,
+      place: place,
+      price: price,
+      description: description,
+      //userID: user.uid,
+      imageRef: ref,
+    });
+
+    console.log(document);
+
+    //router.push("/");
   };
 
   return (
     <div>
-      <h1>Create Post</h1>
+      <h1>Lag Annonse</h1>
       {notification}
       <form onSubmit={handleSubmit}>
-        Image:{" "}
+        Tittel:{" "}
+        <input
+          type="text"
+          value={title}
+          onChange={({ target }) => setTitle(target.value)}
+        />
+        Bilde:{" "}
         <input
           type="file"
           accept="image/*"
@@ -63,14 +88,14 @@ const CreatePost = () => {
         {/*Burde kanskje lage en egen ImageUpload component eller ImageDisplay component
         siden det kan være flere steder der man vil laste opp bilder?*/}
         <img ref={image} />
-        Place:{" "}
+        Plassering:{" "}
         <input
           type="text"
           value={place}
           onChange={({ target }) => setPlace(target.value)}
         />
         <br />
-        Price:{" "}
+        Pris:{" "}
         <input
           type="number"
           min="0"
@@ -78,13 +103,13 @@ const CreatePost = () => {
           onChange={({ target }) => setPrice(target.value)}
         />
         <br />
-        Description:{" "}
+        Beskrivelse:{" "}
         <textarea
           value={description}
           onChange={({ target }) => setDescription(target.value)}
         />
         <br />
-        <button type="submit">Create</button>
+        <button type="submit">Opprett</button>
       </form>
     </div>
   );
