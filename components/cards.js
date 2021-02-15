@@ -9,24 +9,22 @@ import CardActions from '@material-ui/core/CardActions';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 import { red } from '@material-ui/core/colors';
+import { FormHelperText } from '@material-ui/core';
 
 
 const useStyles = makeStyles((theme) => ({
 
     root: {
       maxWidth: 345,
+      minWidth: 345,
+      alignSelf: 'flex-start',
+      
     },
     media: {
       height: 0,
       paddingTop: '56.25%', // 16:9
     },
-    expand: {
-      transform: 'rotate(0deg)',
-      marginLeft: 'auto',
-      transition: theme.transitions.create('transform', {
-        duration: theme.transitions.duration.shortest,
-      }),
-    },
+ 
     expandOpen: {
       transform: 'rotate(180deg)',
     },
