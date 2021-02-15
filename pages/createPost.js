@@ -9,6 +9,7 @@ const CreatePost = () => {
   //Finnes pakker som react-image-uploader så burde kanskje prøve det istedet
 
   const image = useRef(null);
+  const [imageAsFile, setImageAsFile] = useState("");
   //Place er bare en streng nå, må sette opp google
   //maps ting etterhvert
 
@@ -21,9 +22,13 @@ const CreatePost = () => {
 
   const router = useRouter();
 
+  //TODO: Laste opp mer enn et bilde
+  //TODO: Validere input. Post må ha tittel.
+
   const handleImageUpload = (e) => {
     const [file] = e.target.files;
     if (file) {
+      setImageAsFile(file);
       const reader = new FileReader();
       const { current } = image;
       reader.onload = (e) => {
@@ -33,11 +38,8 @@ const CreatePost = () => {
     }
   };
 
-  //Legge til post i database og gå til hovedside?
-  //Bli på siden og gi feilmelding hvis annonsen ikke er fylt ut
   const handleSubmit = (e) => {
     e.preventDefault();
-    //Må endre det her til at
     const user = fire.auth().currentUser;
 
     if (!user) {
@@ -45,14 +47,14 @@ const CreatePost = () => {
       //return;
     }
 
-    //Legge bildet til i storage
-    // andre navn kanskje?
-    console.log(image.current);
-    var ref = "/images/" + uniqid();
-    fire.storage().ref(ref).put();
+    // Add image to storage
+    var ref = uniqid();
+    fire
+      .storage()
+      .ref("/images/" + ref)
+      .put(imageAsFile);
 
-    //TODO: Kode for å legge til annonse i database
-
+    // Create post
     var document = fire.firestore().collection("posts").add({
       title: title,
       place: place,
@@ -62,9 +64,7 @@ const CreatePost = () => {
       imageRef: ref,
     });
 
-    console.log(document);
-
-    //router.push("/");
+    router.push("/");
   };
 
   return (
