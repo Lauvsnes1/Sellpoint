@@ -1,4 +1,6 @@
 import { useState, useRef } from "react";
+import fire from "../config/fire-config";
+import { useRouter } from "next/router";
 
 const CreatePost = () => {
   //Forstår ikke bilde greiene helt :/ Hentet fra
@@ -13,6 +15,8 @@ const CreatePost = () => {
   const [description, setDescription] = useState("");
 
   const [notification, setNotification] = useState("");
+
+  const router = useRouter();
 
   const handleImageUpload = (e) => {
     const [file] = e.target.files;
@@ -30,6 +34,18 @@ const CreatePost = () => {
   //Bli på siden og gi feilmelding hvis annonsen ikke er fylt ut
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    //Må endre det her til at
+    const user = fire.auth().currentUser;
+
+    if (!user) {
+      setNotification("You have to login first!");
+      return;
+    }
+
+    //TODO: Kode for å legge til annonse i database
+
+    router.push("/");
   };
 
   return (
