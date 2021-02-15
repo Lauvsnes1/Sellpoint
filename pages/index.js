@@ -11,7 +11,7 @@ export default function Test() {
                 </a>
             </Link>
         </h3>
-        <Image src="/images/spisebord.jpg" height={150} width={50} alt="Spisebord"/>
+        <Image src="/images/spisebord.jpg" height={150} alt="Spisebord"/>
         <style jsx>{`
 
             .link {
