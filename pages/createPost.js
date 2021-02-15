@@ -13,7 +13,6 @@ const CreatePost = () => {
   const [place, setPlace] = useState("");
   const [price, setPrice] = useState(0);
   const [description, setDescription] = useState("");
-
   const [notification, setNotification] = useState("");
 
   const router = useRouter();
