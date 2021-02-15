@@ -4,12 +4,21 @@ import { useRouter } from "next/router";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 
+const buttonStyle = {
+  color: "#C6FF00",
+  borderColor: "#C6FF00",
+};
+
 const Register = () => {
   const router = useRouter();
-  const [userName, setUsername] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passConf, setPassConf] = useState("");
   const [notification, setNotification] = useState("");
+  const [invalidEmail, setInvalidEmail] = useState("")
+  const [emailInUse, setEmailInUse] = useState("")
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -24,11 +33,25 @@ const Register = () => {
     }
     fire
       .auth()
-      .createUserWithEmailAndPassword(userName, password)
+      .createUserWithEmailAndPassword(email, password)
+      .then(({ user }) => {
+        console.log(user.uid);
+        router.push("/");
+      })
       .catch((err) => {
-        console.log(err.code, err.message);
+        if (err.code == "auth/email-already-in-use") {
+            setEmailInUse("Email already in use")
+            setTimeout(() => {
+                setEmailInUse("");
+              }, 2000);
+        }
+        if (err.code == "auth/invalid-email") {
+            setInvalidEmail("Invalid email");
+            setTimeout(() => {
+                setInvalidEmail("");
+              }, 2000);
+        }
       });
-    router.push("/");
   };
 
   return (
@@ -54,19 +77,42 @@ const Register = () => {
         }
       `}</style>
       <h1>Create new user</h1>
-      {notification}
       <form onSubmit={handleLogin}>
         <div className="textfield">
           <TextField
-            value={userName}
-            onChange={({ target }) => setUsername(target.value)}
+            required
+            value={email}
+            onChange={({ target }) => setEmail(target.value)}
             id="outlined-required"
             label="Email"
+            variant="outlined"
+            error={invalidEmail != "" || emailInUse != ""}
+            helperText = {invalidEmail + emailInUse}
+          />
+        </div>
+        <div className="textfield">
+          <TextField
+            required
+            value={firstName}
+            onChange={({ target }) => setFirstName(target.value)}
+            id="outlined-required"
+            label="First name"
             variant="outlined"
           />
         </div>
         <div className="textfield">
           <TextField
+            required
+            value={lastName}
+            onChange={({ target }) => setLastName(target.value)}
+            id="outlined-required"
+            label="Last name"
+            variant="outlined"
+          />
+        </div>
+        <div className="textfield">
+          <TextField
+            required
             value={password}
             onChange={({ target }) => setPassword(target.value)}
             id="outlined-password-input"
@@ -74,10 +120,12 @@ const Register = () => {
             type="password"
             autoComplete="current-password"
             variant="outlined"
+            error={notification != ""}
           />
         </div>
         <div className="textfield">
           <TextField
+            required
             value={passConf}
             onChange={({ target }) => setPassConf(target.value)}
             id="outlined-password-confirmation-input"
@@ -85,10 +133,12 @@ const Register = () => {
             type="password"
             autoComplete="current-password"
             variant="outlined"
+            error={notification != ""}
+            helperText={notification}
           />
         </div>
         <div className="button">
-          <Button variant="outlined" color="primary" type="submit">
+          <Button style={buttonStyle} variant="outlined" type="submit">
             Register
           </Button>
         </div>
