@@ -1,10 +1,13 @@
+import Head from 'next/head'
 import Link from "next/link"
 import Image from "next/image"
 export default function Test2() {
     return (
         <>
-        
-        <h3>Mindre overskrift</h3>
+        <Head>
+            <title>Annonse-Spisebord</title>
+        </Head>
+        <h1>Spisebord</h1>
         <Image src="/images/spisebord.jpg" height={428} width={640} alt="Spisebord"/>
         <h2 className="title">
             <Link href="/">

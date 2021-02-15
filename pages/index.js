@@ -1,12 +1,16 @@
+import Head from 'next/head'
 import Link from "next/link"
 import Image from "next/image"
 export default function Test() {
     return (
         <>
+        <Head>
+            <title>Sellpoint - Forside</title>
+        </Head>
         <h2 className="title">
             <Link href="/Annonse">
                 <a>
-                Støvsuger
+                Spisebord
                 </a>
             </Link>
         </h2>,
