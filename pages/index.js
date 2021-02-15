@@ -8,12 +8,10 @@ export default function Test() {
     return (
         <>
         <Layout>
-        <div className={utilStyles.lightText}>
         <Head>
             <title>Sellpoint - Forside</title>
         </Head>
-        </div>
-        <h2 className="title">
+        <h2 className={utilStyles.headingMd}>
             <Link href="/Annonse">
                 <a>
                 Spisebord
