@@ -4,7 +4,7 @@ export default function Test() {
     return (
         <>
         <h2 className="title">
-            <Link href="/test">
+            <Link href="/Annonse.js">
                 <a>
                 Støvsuger
                 </a>
@@ -12,7 +12,7 @@ export default function Test() {
         </h2>,
         <Image src="/images/spisebord.jpg" height={214} width={320} alt="Spisebord"/>
         <h3 className="link">
-            <Link href="/test2">
+            <Link href="/Annonse.js">
                 <a>
                     Gå til annonse
                 </a>
