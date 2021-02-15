@@ -8,9 +8,9 @@ export default function Test() {
     return (
         <>
         <Layout>
-        <div className={utilStyles.heading2Xl}>
+        <div className={utilStyles.lightText}>
         <Head>
-            <title className={utilStyles.lightText}>Sellpoint - Forside</title>
+            <title>Sellpoint - Forside</title>
         </Head>
         </div>
         <h2 className="title">
