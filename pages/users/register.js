@@ -3,6 +3,7 @@ import fire from "../../config/fire-config";
 import { useRouter } from "next/router";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
+import Link from "next/link"
 
 const Register = () => {
   const router = useRouter();
@@ -15,7 +16,7 @@ const Register = () => {
   const [invalidEmail, setInvalidEmail] = useState("")
   const [emailInUse, setEmailInUse] = useState("")
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     if (password !== passConf) {
       setNotification("Password and password confirmation does not   match");
@@ -26,13 +27,15 @@ const Register = () => {
       setPassConf("");
       return null;
     }
-    fire
+    await fire.auth().setPersistence(fire.auth.Auth.Persistence.LOCAL)
+    await fire
       .auth()
       .createUserWithEmailAndPassword(email, password)
       .then(({ user }) => {
-        console.log(user.uid);
-        router.push("/");
-      })
+        const ref = fire.firestore().collection('users').doc(user.uid)
+        const permissions = {user: true}
+        ref.set({firstName, lastName,  permissions})
+      }).then(() => router.push("/")) 
       .catch((err) => {
         if (err.code == "auth/email-already-in-use") {
             setEmailInUse("Email already in use")
@@ -46,6 +49,7 @@ const Register = () => {
                 setInvalidEmail("");
               }, 2000);
         }
+        console.log(err)
       });
   };
 

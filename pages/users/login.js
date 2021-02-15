@@ -11,9 +11,10 @@ const Login = () => {
   const [notify, setNotification] = useState("");
   const router = useRouter();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    fire
+    await fire.auth().setPersistence(fire.auth.Auth.Persistence.LOCAL);
+    await fire
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then(() => router.push("/"))
@@ -50,7 +51,7 @@ const Login = () => {
           margin: auto;
         }
         a {
-            text-decoration: none;
+          text-decoration: none;
         }
       `}</style>
       <h1>Login</h1>
@@ -82,7 +83,7 @@ const Login = () => {
         <Button color="secondary" variant="contained" type="submit">
           Log in
         </Button>
-        <Link href="register">
+        <Link href="/users/register">
           <a>
             <Button color="secondary" variant="outlined">
               Register
