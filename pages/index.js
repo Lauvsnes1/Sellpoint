@@ -3,15 +3,21 @@ import Image from "next/image"
 export default function Test() {
     return (
         <>
-        <h1>Test123</h1>,
+        <h2 className="title">
+            <Link href="/test">
+                <a>
+                Støvsuger
+                </a>
+            </Link>
+        </h2>,
+        <Image src="/images/spisebord.jpg" height={214} width={320} alt="Spisebord"/>
         <h3 className="link">
             <Link href="/test2">
                 <a>
-                    Gå til andre siden
+                    Gå til annonse
                 </a>
             </Link>
         </h3>
-        <Image src="/images/spisebord.jpg" height={150} alt="Spisebord"/>
         <style jsx>{`
 
             .link {

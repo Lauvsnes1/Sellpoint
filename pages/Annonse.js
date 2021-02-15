@@ -2,15 +2,9 @@ import Link from "next/link"
 export default function Test2() {
     return (
         <>
-        <h1 className="title">
-            <Link href="/test">
-                <a>
-                Tilbake  til den andre siden igjen
-                </a>
-            </Link>
-        </h1>,
+        
         <h3>Mindre overskrift</h3>
-
+        <Image src="/images/spisebord.jpg" height={428} width={640} alt="Spisebord"/>
         <style jsx>{`
 
             .title {
