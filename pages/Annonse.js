@@ -7,7 +7,7 @@ export default function Test2() {
         <h3>Mindre overskrift</h3>
         <Image src="/images/spisebord.jpg" height={428} width={640} alt="Spisebord"/>
         <h2 className="title">
-            <Link href="/index.js">
+            <Link href="/index">
                 <a>
                 Tilbake til forsiden
                 </a>
