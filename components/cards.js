@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
@@ -10,6 +10,10 @@ import Typography from '@material-ui/core/Typography';
 import { red } from '@material-ui/core/colors';
 import { FormHelperText } from '@material-ui/core';
 import theme from '../src/theme';
+import { db } from '../config/fire-config';
+import firebase from "../config/fire-config";
+
+
 
 
 const useStyles = makeStyles((theme) => ({
@@ -34,20 +38,65 @@ const useStyles = makeStyles((theme) => ({
     },
   }));
 
+
+
+function usePosts(){
+  const [posts, setPost] = useState([])
+
+  useEffect(() => {
+    firebase
+    .firestore()
+    .collection('posts')
+    .onSnapshot((snapShot) => {
+      const newPosts = snapShot.docs.map((doc) =>({
+        id: doc.id,
+        ...doc.data()
+      }) )
+      setPost(newPosts);
+    } )
+  }, [])
+
+  //brukes kanskje senere
+  
+  return posts
+}
+
   
   
   export default function AnnonseCard() {
+
+    const post = usePosts();
+
   
   const classes = useStyles();
+  const [postId,setPostId] = useState('');
+  
   const [tittel,setTittel] = useState('');
   const [lokasjon, setLokasjon] = useState('');
   const [pris, setPris]= useState(0);
   const [beskrivelse, setBeskrivelse] = useState('');
   const [bildesti, setBilde] = useState('');
+
+  {/*useEffect(() =>{
+    FirestoreService.getPosts(postId)
+    .then(post => { 
+      if(post.exists){
+        setPost(post.data())
+        console.log(post.data());
+      }
+      else{
+        console.log('fant ikke post')
+        //setPost();
+      }})
+    },[postId]);
+  */}
+    
    
     return (
         
+     
         <Card className={classes.root}>
+          
           <CardHeader
             avatar={
               <Avatar aria-label="recipe" className={classes.avatar}>
