@@ -8,9 +8,11 @@ export default function Test() {
     return (
         <>
         <Layout>
-        <Head className={utilStyles.headingLg}>
+        <div className={utilStyles.heading2Xl}>
+        <Head>
             <title>Sellpoint - Forside</title>
         </Head>
+        </div>
         <h2 className="title">
             <Link href="/Annonse">
                 <a>
