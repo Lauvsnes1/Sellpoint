@@ -15,18 +15,6 @@ export default function Home() {
       <div className={styles.rad}>
         <div className={styles.annonseContainer}>
             <PostCards/>
-        
-            
-        </div>
-        <div className={styles.annonseContainer}>
-            <Card>
-            </Card>
-            <Card>
-
-            </Card>
-            <Card>
-            </Card>
-            
         </div>
       </div>
      </div>

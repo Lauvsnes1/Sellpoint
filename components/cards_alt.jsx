@@ -3,6 +3,7 @@ import CardHeader from '@material-ui/core/CardHeader';
 import CardMedia from '@material-ui/core/CardMedia';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
+import Button from '@material-ui/core/Button';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 import theme from '../src/theme';
@@ -16,9 +17,11 @@ import styles from '../styles/Home.module.css'
 const useStyles = makeStyles((theme) => ({
 
     root: {
-      maxWidth: 345,
-      minWidth: 345,
-      alignSelf: 'flex-start',
+      minWidth: 300,
+      maxWidth: 300,
+      height: 400,
+      alignItems: 'flex-start',
+
       
     },
     media: {
@@ -57,12 +60,11 @@ function usePosts(){
 }
 
   
-  
+i = 0;
  const PostCards = () => {
-
  const posts = usePosts();
 
-  
+ i+=1;
   const classes = useStyles();
   const [postId,setPostId] = useState('');
   
@@ -72,9 +74,11 @@ function usePosts(){
   const [beskrivelse, setBeskrivelse] = useState('');
  const [bildesti, setBilde] = useState('');*/}
 
-   
+   if(i%3==0){
+     <br/>
+   }
     return (
-    <div className={styles.rad}>
+    <div className={styles.annonseContainer}>
      {posts.map((post) => 
         <Card className={classes.root}>
             
@@ -99,13 +103,17 @@ function usePosts(){
                 <Typography variant="body2" color="textSecondary" component="p">
                 {post.description}
                 </Typography>
-                <Typography style={theme.typography.h3}>
-                    prisen er:  
-                {post.pris} 
+                <Typography style={{textAlign: "right"}}> 
+                  {post.pris} kr
                 </Typography>
             </CardContent>
             <CardActions>
-                
+              <Button size="small" variant = 'outlined' color='secondary'>
+                Annonse
+              </Button>
+              <Button size="small" variant = 'outlined' color='secondary'>
+                Selger
+              </Button>
             </CardActions>
 
           </div>
