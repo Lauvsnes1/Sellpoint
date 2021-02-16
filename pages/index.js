@@ -3,7 +3,7 @@ import styles from '../styles/Home.module.css'
 import AppBar from '../components/header'
 import Card from '../components/cards'
 import firebase from "../config/fire-config";
-import PostCards from '../components/cards_alt'
+import PostCards from '../components/cards_alt';
 
 
 

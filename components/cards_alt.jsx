@@ -12,9 +12,13 @@ import firebase from "../config/fire-config";
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import styles from '../styles/Home.module.css'
+import { colors, ThemeProvider} from '@material-ui/core';
 
+const useStyles = makeStyles(() => ({
 
-const useStyles = makeStyles((theme) => ({
+    subheader: {
+      color: '#90CC00'//får det ikke til med theme.palette???
+    },
 
     root: {
       minWidth: 300,
@@ -28,10 +32,14 @@ const useStyles = makeStyles((theme) => ({
       height: 0,
       paddingTop: '56.25%', // 16:9
     },
- 
-    expandOpen: {
-      transform: 'rotate(180deg)',
+
+    button: {
+      paddingLeft: '100px',
+      outlineOffset: '100px',
     },
+
+    
+ 
     avatar: {
         //legg inn profilbilde her senere
       backgroundColor: 'secondary',
@@ -48,6 +56,7 @@ function usePosts(){
     .firestore()
     .collection('posts')
     .onSnapshot((snapShot) => {
+      
       const newPosts = snapShot.docs.map((doc) =>({
         id: doc.id,
         ...doc.data()
@@ -60,11 +69,11 @@ function usePosts(){
 }
 
   
-i = 0;
+
  const PostCards = () => {
  const posts = usePosts();
 
- i+=1;
+
   const classes = useStyles();
   const [postId,setPostId] = useState('');
   
@@ -74,57 +83,69 @@ i = 0;
   const [beskrivelse, setBeskrivelse] = useState('');
  const [bildesti, setBilde] = useState('');*/}
 
-   if(i%3==0){
-     <br/>
-   }
+    
     return (
-    <div className={styles.annonseContainer}>
-     {posts.map((post) => 
-        <Card className={classes.root}>
+    <ThemeProvider theme ={theme}>
+      <div className={styles.annonseContainer}>
+      {posts.map((post) => 
+          <Card className={classes.root}>
             
-            <div>
-                <CardHeader
-                avatar={
-                <Avatar aria-label="recipe" className={classes.avatar}>
-                    S {/*legg inn profilbilde til selger her*/ }
-                </Avatar>
-                
-                }
-            
-                title = {post.title}
-                subheader={post.place}
-            />
-            <CardMedia
-                className={classes.media}
-                //image={bildesti}
-                //fiks senere
-            />
-            <CardContent>
-                <Typography variant="body2" color="textSecondary" component="p">
-                {post.description}
-                </Typography>
-                <Typography style={{textAlign: "right"}}> 
-                  {post.pris} kr
-                </Typography>
-            </CardContent>
-            <CardActions>
-              <Button size="small" variant = 'outlined' color='secondary'>
-                Annonse
-              </Button>
-              <Button size="small" variant = 'outlined' color='secondary'>
-                Selger
-              </Button>
-            </CardActions>
+              
+              <div>
+                  <CardHeader
+                  classes={{
+                    subheader: classes.subheader
+                  }}
 
-          </div>
+                  avatar={
+                  <Avatar aria-label="recipe" className={classes.avatar}>
+                      S {/*legg inn profilbilde til selger her eller initialer*/ }
+                  </Avatar>
+                  
+                  } 
+              
+                  title = {post.title}
+                  subheader={post.place}
+              />
+              <CardMedia
+                  className={classes.media}
+                  //image={bildesti}
+                  //fiks senere
+              />
+              <CardContent>
+                  <Typography variant="body2" color="textSecondary" component="p">
+                  {post.description}
+                  </Typography>
+                  <Typography style={{textAlign: "right"}}> 
+                    {post.pris} kr
+                  </Typography>
+              </CardContent>
+              <CardActions>
+                
+                
+                <Button size="small" variant = 'outlined' color='secondary' >
+                  Annonse
+                </Button>
+                <p/><p/><p/><p/><p/><p/><p/><p/><p/><p/><p/><p/><p/><p/><p/> 
+                {/*ser jævlig shady ut men ingenting funka*/}
+                  
+                <Button size="small" variant = 'outlined' color='secondary'>
+                  Selger
+                </Button>
             
-          </Card>
-     )}
-          </div>
+        
+              </CardActions>
+
+            </div>
+              
+            </Card>
+      )}
+            </div>
+          </ThemeProvider>
 
         //endelig formatering blir gjort når vi fikser koblingen til firebase 
       );
-    
         };
+        
 
         export default PostCards
