@@ -5,8 +5,6 @@ import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
-import { red } from '@material-ui/core/colors';
-import { FormHelperText } from '@material-ui/core';
 import theme from '../src/theme';
 import { db } from '../config/fire-config';
 import firebase from "../config/fire-config";
