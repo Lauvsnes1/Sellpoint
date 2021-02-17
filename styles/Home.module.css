@@ -90,6 +90,7 @@
   justify-content: space-around;
   align-content: space-around;
   padding-bottom: 3%;
+  flex-wrap: wrap;
 
 
 }

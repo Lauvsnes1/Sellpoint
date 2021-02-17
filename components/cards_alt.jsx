@@ -92,7 +92,7 @@ function usePosts(){
             
               
               <div>
-                  <CardHeader
+                  <CardHeader 
                   classes={{
                     subheader: classes.subheader
                   }}
@@ -122,17 +122,17 @@ function usePosts(){
               </CardContent>
               <CardActions>
                 
-                
+                <div style={{margin: 'auto', justifyContent: 'space-between'}}>
                 <Button size="small" variant = 'outlined' color='secondary' >
                   Annonse
                 </Button>
-                <p/><p/><p/><p/><p/><p/><p/><p/><p/><p/><p/><p/><p/><p/><p/> 
+                
                 {/*ser jævlig shady ut men ingenting funka*/}
                   
                 <Button size="small" variant = 'outlined' color='secondary'>
                   Selger
                 </Button>
-            
+                </div>
         
               </CardActions>
 
