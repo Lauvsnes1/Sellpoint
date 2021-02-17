@@ -1,8 +1,9 @@
 import { createMuiTheme } from "@material-ui/core/styles";
+import createPalette from "@material-ui/core/styles/createPalette";
 
 const theme = createMuiTheme({
 
-    palette: {
+    palette: createPalette({
         primary: { 
             light:'#FFFFFF',
             main: '#FAFAFA',
@@ -13,13 +14,13 @@ const theme = createMuiTheme({
         },
         secondary: {
             light:'#FDFF58',
-            main: '#C6FF00',
+            main: '#90CC00', //satt midlertidig fordi jeg ikke får til secondary.dark
             dark: '#90CC00',
             contrastText: '#000'
             //Limegrønn
         }
 
-    },
+    }),
     typography: {
         h1:{
             fontFamily: '"Helvetica Neue"',
