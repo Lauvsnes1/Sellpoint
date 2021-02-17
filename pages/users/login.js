@@ -53,8 +53,11 @@ const Login = () => {
         a {
           text-decoration: none;
         }
+        .buttons {
+            dislplay: flex;
+        }
       `}</style>
-      <h1>Login</h1>
+      <h1>Logg inn</h1>
       <form onSubmit={handleLogin}>
         <div className="textfield">
           <TextField
@@ -62,7 +65,7 @@ const Login = () => {
             value={email}
             onChange={({ target }) => setEmail(target.value)}
             id="outlined-required"
-            label="Email"
+            label="E-post"
             variant="outlined"
           />
         </div>
@@ -72,7 +75,7 @@ const Login = () => {
             value={password}
             onChange={({ target }) => setPassword(target.value)}
             id="outlined-password-input"
-            label="Password"
+            label="Passord"
             type="password"
             autoComplete="current-password"
             variant="outlined"
@@ -80,16 +83,25 @@ const Login = () => {
             helperText={notify}
           />
         </div>
-        <Button color="secondary" variant="contained" type="submit">
-          Log in
-        </Button>
-        <Link href="/users/register">
-          <a>
-            <Button color="secondary" variant="outlined">
-              Register
-            </Button>
-          </a>
-        </Link>
+        <div className="buttons">
+          <Button 
+          style={{width: '100%'}}
+          color="secondary" 
+          variant="contained" 
+          type="submit">
+            Logg inn
+          </Button>
+          <Link href="/users/register">
+            <a>
+              <Button 
+              style={{width: '100%', marginTop: '10px'}}
+              color="secondary" 
+              variant="outlined">
+                Registrer deg
+              </Button>
+            </a>
+          </Link>
+        </div>
       </form>
     </div>
   );

@@ -74,8 +74,14 @@ const Register = () => {
         .button {
           margin: auto;
         }
+        .buttons {
+            dislplay: flex;
+        }
+        a {
+            text-decoration: none;
+        }
       `}</style>
-      <h1>Create new user</h1>
+      <h1>Opprett ny bruker</h1>
       <form onSubmit={handleLogin}>
         <div className="textfield">
           <TextField
@@ -83,7 +89,7 @@ const Register = () => {
             value={email}
             onChange={({ target }) => setEmail(target.value)}
             id="outlined-required"
-            label="Email"
+            label="E-post"
             variant="outlined"
             error={invalidEmail != "" || emailInUse != ""}
             helperText = {invalidEmail + emailInUse}
@@ -95,7 +101,7 @@ const Register = () => {
             value={firstName}
             onChange={({ target }) => setFirstName(target.value)}
             id="outlined-required"
-            label="First name"
+            label="Fornavn"
             variant="outlined"
           />
         </div>
@@ -105,7 +111,7 @@ const Register = () => {
             value={lastName}
             onChange={({ target }) => setLastName(target.value)}
             id="outlined-required"
-            label="Last name"
+            label="Etternavn"
             variant="outlined"
           />
         </div>
@@ -115,7 +121,7 @@ const Register = () => {
             value={password}
             onChange={({ target }) => setPassword(target.value)}
             id="outlined-password-input"
-            label="Password"
+            label="Passord"
             type="password"
             autoComplete="current-password"
             variant="outlined"
@@ -128,7 +134,7 @@ const Register = () => {
             value={passConf}
             onChange={({ target }) => setPassConf(target.value)}
             id="outlined-password-confirmation-input"
-            label="Password confirmation"
+            label="Bekreft passord"
             type="password"
             autoComplete="current-password"
             variant="outlined"
@@ -136,10 +142,24 @@ const Register = () => {
             helperText={notification}
           />
         </div>
-        <div className="button">
-          <Button color='secondary' variant="outlined" type="submit">
-            Register
+        <div className="buttons">
+          <Button 
+          style={{width: '100%'}}
+          color="secondary" 
+          variant="contained" 
+          type="submit">
+            Registrer deg
           </Button>
+          <Link href="/users/login">
+            <a>
+              <Button 
+              style={{width: '100%', marginTop: '10px'}}
+              color="secondary" 
+              variant="outlined">
+                Logg inn
+              </Button>
+            </a>
+          </Link>
         </div>
       </form>
     </div>
