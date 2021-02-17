@@ -13,6 +13,8 @@ import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import styles from '../styles/Home.module.css'
 import { colors, ThemeProvider} from '@material-ui/core';
+import Image from 'next/image';
+
 
 const useStyles = makeStyles(() => ({
 
@@ -21,15 +23,16 @@ const useStyles = makeStyles(() => ({
     },
 
     root: {
-      minWidth: 300,
-      maxWidth: 300,
-      height: 400,
+      minWidth: 330,
+      maxWidth: 330,
+      height: 390,
+      marginTop: 30,
       alignItems: 'flex-start',
 
       
     },
     media: {
-      height: 0,
+      height: 100,
       paddingTop: '56.25%', // 16:9
     },
 
@@ -77,13 +80,9 @@ function usePosts(){
   const classes = useStyles();
   const [postId,setPostId] = useState('');
   
-  {/*const [tittel,setTittel] = useState('');
-  const [lokasjon, setLokasjon] = useState('');
-  const [pris, setPris]= useState(0);
-  const [beskrivelse, setBeskrivelse] = useState('');
- const [bildesti, setBilde] = useState('');*/}
-
+  
     
+
     return (
     <ThemeProvider theme ={theme}>
       <div className={styles.annonseContainer}>
@@ -99,7 +98,7 @@ function usePosts(){
 
                   avatar={
                   <Avatar aria-label="recipe" className={classes.avatar}>
-                      S {/*legg inn profilbilde til selger her eller initialer*/ }
+                      <Image layout='fill' src='/Meg.jpg'/>{/*legg inn profilbilde til selger her eller initialer*/ }
                   </Avatar>
                   
                   } 
@@ -109,29 +108,39 @@ function usePosts(){
               />
               <CardMedia
                   className={classes.media}
-                  //image={bildesti}
-                  //fiks senere
+                  image= {firebase.storage().ref('images/' + post.imageRef).getDownloadURL()}
+                  
               />
+
+              {/*<Image src="firebase.storage().ref('/images/' + post.imageRef).getDownloadURL()" //brukt til test
+              height='10px'
+                width='10px'/>*/}
+              
+              
               <CardContent>
                   <Typography variant="body2" color="textSecondary" component="p">
                   {post.description}
                   </Typography>
                   <Typography style={{textAlign: "right"}}> 
-                    {post.pris} kr
+                    {post.price} kr
+                    
                   </Typography>
               </CardContent>
               <CardActions>
                 
-                <div style={{margin: 'auto', justifyContent: 'space-between'}}>
+                <div style={{margin: 'auto', justifyContent: 'space-around', width: 'full'}}>
+        
                 <Button size="small" variant = 'outlined' color='secondary' >
                   Annonse
                 </Button>
+              
                 
-                {/*ser jævlig shady ut men ingenting funka*/}
-                  
+                
+            
                 <Button size="small" variant = 'outlined' color='secondary'>
                   Selger
                 </Button>
+              
                 </div>
         
               </CardActions>
