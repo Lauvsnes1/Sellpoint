@@ -4,67 +4,42 @@ import { useRouter } from "next/router";
 import uniqid from "uniqid";
 
 const CreatePost = () => {
-  //Forstår ikke bilde greiene helt :/ Hentet fra
-  //https://dev.to/asimdahall/client-side-image-upload-in-react-5ffc
-  //Finnes pakker som react-image-uploader så burde kanskje prøve det istedet
-
-
-  const [imageRefs, setImageRefs] = useState([createRef(null)]);
-  const image = useRef(null);
-  const [imageAsFile, setImageAsFile] = useState("");
-  
   //Place er bare en streng nå, må sette opp google
   //maps ting etterhvert
-
   const [title, setTitle] = useState("");
   const [place, setPlace] = useState("");
   const [price, setPrice] = useState(0);
   const [description, setDescription] = useState("");
 
+  const [imageFiles, setImageFiles] = useState([]);
+  const [imageSrcs, setImageSrcs] = useState([]);
+
   const [notification, setNotification] = useState("");
 
   const router = useRouter();
 
-  //TODO: Laste opp mer enn et bilde
-  //TODO: Validere input. Post må ha tittel.
+  //TODO: Validere input. Post må ha tittel blant annet.
+  //TODO: Legge til miniDescription
 
-  /*
   const handleImageUpload = (e) => {
-    console.log(e.target.files);
-    Array.from(e.target.files).forEach(file => {  
-      if (file) {
-        setImageAsFile(file);
-        const reader = new FileReader();
-        const { current } = imageRefs[imageRefs.length-1];
-        reader.onload = (e) => {
-          current.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-        setImageRefs(prevImageRef => [...prevImageRef, createRef(null)])
-      }
+    const newFiles = Array.from(e.target.files);
+    const newSrcs = [];
+
+    newFiles.forEach((file) => {
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        newSrcs.push(e.target.result);
+
+        //Update state when all files have been read
+        if (newSrcs.length === newFiles.length) {
+          setImageSrcs((oldSrcs) => [...oldSrcs, ...newSrcs]);
+        }
+      };
+      reader.readAsDataURL(file);
     });
+    setImageFiles((oldFiles) => [...oldFiles, ...newFiles]);
   };
-  */
-  const handleImageUpload = (e) => {
-    uploadImages(Array.from(e.target.files));
-  }
-  const uploadImages = (files) => {
-    if (files.length == 0) return;
-    
-    const [file] = files;
-    setImageAsFile(file);
-    const reader = new FileReader();
-    const { current } = imageRefs[imageRefs.length - 1];
-    reader.onload = (e) => {
-    current.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-    files.splice(0);
-    setImageRefs(
-    (prevImageRefs) => [...prevImageRefs, createRef(null)],
-    uploadImages(files)
-    );
-    };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -115,25 +90,16 @@ const CreatePost = () => {
         />
         {/*Burde kanskje lage en egen ImageUpload component eller ImageDisplay component
         siden det kan være flere steder der man vil laste opp bilder?*/}
-        {/*
-        <img ref={imageRefs[0]} />
+        {/* Vet ikke om det er greit å bare bruke indeks som key?*/}
+        {imageSrcs.map((imageSrc, index) => (
+          <img key={index} src={imageSrc} />
+        ))}
         Plassering:{" "}
         <input
           type="text"
           value={place}
           onChange={({ target }) => setPlace(target.value)}
         />
-        */}
-        {imageRefs.map(imageRef => 
-          <img ref={imageRef} />) }
-        Plassering:{" "}
-        <input
-          type="text"
-          value={place}
-          onChange={({ target }) => setPlace(target.value)}
-        />
-        
-        
         <br />
         Pris:{" "}
         <input
