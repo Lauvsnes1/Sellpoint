@@ -11,8 +11,8 @@ const CreatePost = () => {
   const [price, setPrice] = useState(0);
   const [description, setDescription] = useState("");
 
-  const [imageFiles, setImageFiles] = useState([]);
-  const [imageSrcs, setImageSrcs] = useState([]);
+  const [imageFile, setImageFile] = useState(null);
+  const [imageSrc, setImageSrc] = useState(null);
 
   const [notification, setNotification] = useState("");
 
@@ -22,45 +22,37 @@ const CreatePost = () => {
   //TODO: Legge til miniDescription
 
   const handleImageUpload = (e) => {
-    const newFiles = Array.from(e.target.files);
-    const newSrcs = [];
+    const [file] = e.target.files;
 
-    newFiles.forEach((file) => {
+    if (file) {
       const reader = new FileReader();
 
       reader.onload = (e) => {
-        newSrcs.push(e.target.result);
-
-        //Update state when all files have been read
-        if (newSrcs.length === newFiles.length) {
-          setImageSrcs((oldSrcs) => [...oldSrcs, ...newSrcs]);
-        }
+        setImageSrc(e.target.result);
       };
       reader.readAsDataURL(file);
-    });
-    setImageFiles((oldFiles) => [...oldFiles, ...newFiles]);
+      setImageFile(file);
+    }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const user = fire.auth().currentUser;
-    console.log(user);
+
     if (!user) {
       setNotification("Du må logge inn først!");
       return;
     }
 
-    // Add image to storage
-    let refs = [];
-
-    imageFiles.forEach((file) => {
-      let ref = uniqid();
-      refs.push(ref);
-      fire
-        .storage()
-        .ref("/images/" + ref)
-        .put(file);
-    });
+    // Add images to storage
+    const ref = uniqid();
+    const downloadUrl = await fire
+      .storage()
+      .ref("/images/" + ref)
+      .put(imageFile)
+      .then((res) => {
+        return res.ref.getDownloadURL();
+      });
 
     // Create post
     var document = fire.firestore().collection("posts").add({
@@ -69,7 +61,7 @@ const CreatePost = () => {
       price: price,
       description: description,
       userID: user.uid,
-      imageRefs: refs,
+      imageUrl: downloadUrl,
     });
 
     router.push("/");
@@ -90,15 +82,13 @@ const CreatePost = () => {
         <input
           type="file"
           accept="image/*"
-          multiple={true}
+          multiple={false}
           onChange={handleImageUpload}
         />
         {/*Burde kanskje lage en egen ImageUpload component eller ImageDisplay component
         siden det kan være flere steder der man vil laste opp bilder?*/}
         {/* Vet ikke om det er greit å bare bruke indeks som key?*/}
-        {imageSrcs.map((imageSrc, index) => (
-          <img key={index} src={imageSrc} />
-        ))}
+        <img src={imageSrc} />
         Plassering:{" "}
         <input
           type="text"
