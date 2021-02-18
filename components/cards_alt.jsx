@@ -109,7 +109,7 @@ function usePosts(){
               />
               <CardMedia
                   className={classes.media}
-                  image= {"https://firebasestorage.googleapis.com/v0/b/sellpoint-d7047.appspot.com/o/images%2F"+ post.imageRef +"?alt=media&token=fdd07c5d-b22f-4598-b99a-75681eaa78c4"}
+                  image= {post.imageUrl}
               />
 
               {/*<Image src="firebase.storage().ref('/images/' + post.imageRef).getDownloadURL()" //brukt til test
