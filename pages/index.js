@@ -1,8 +1,11 @@
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
+import fire from '../config/fire-config'
 import AppBar from '../components/header'
 
 export default function Home() {
+  const user = fire.auth().currentUser;
+  console.log(user)
   return (
     <div className={styles.container}>
       <AppBar>
