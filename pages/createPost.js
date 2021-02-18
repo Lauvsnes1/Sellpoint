@@ -44,18 +44,23 @@ const CreatePost = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const user = fire.auth().currentUser;
-
+    console.log(user);
     if (!user) {
       setNotification("Du må logge inn først!");
-      //return;
+      return;
     }
 
     // Add image to storage
-    var ref = uniqid();
-    fire
-      .storage()
-      .ref("/images/" + ref)
-      .put(imageAsFile);
+    let refs = [];
+
+    imageFiles.forEach((file) => {
+      let ref = uniqid();
+      refs.push(ref);
+      fire
+        .storage()
+        .ref("/images/" + ref)
+        .put(file);
+    });
 
     // Create post
     var document = fire.firestore().collection("posts").add({
@@ -63,8 +68,8 @@ const CreatePost = () => {
       place: place,
       price: price,
       description: description,
-      //userID: user.uid,
-      imageRef: ref,
+      userID: user.uid,
+      imageRefs: refs,
     });
 
     router.push("/");
