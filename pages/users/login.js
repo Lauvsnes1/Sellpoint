@@ -3,11 +3,7 @@ import fire from "../../config/fire-config";
 import { useRouter } from "next/router";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-
-const buttonStyle = {
-  color: "#C6FF00",
-  borderColor: "#C6FF00",
-};
+import Link from "next/link";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -15,9 +11,10 @@ const Login = () => {
   const [notify, setNotification] = useState("");
   const router = useRouter();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    fire
+    await fire.auth().setPersistence(fire.auth.Auth.Persistence.LOCAL);
+    await fire
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then(() => router.push("/"))
@@ -34,7 +31,33 @@ const Login = () => {
 
   return (
     <div>
-      <h1>Login</h1>
+      <style jsx>{`
+        div {
+          display: flex;
+          flex-direction: column;
+          margin: auto;
+        }
+        form {
+          max-width: 200px;
+          margin: auto;
+        }
+        .textfield {
+          margin: 20px 0;
+        }
+        h1 {
+          text-align: center;
+        }
+        .button {
+          margin: auto;
+        }
+        a {
+          text-decoration: none;
+        }
+        .buttons {
+            dislplay: flex;
+        }
+      `}</style>
+      <h1>Logg inn</h1>
       <form onSubmit={handleLogin}>
         <div className="textfield">
           <TextField
@@ -42,7 +65,7 @@ const Login = () => {
             value={email}
             onChange={({ target }) => setEmail(target.value)}
             id="outlined-required"
-            label="Email"
+            label="E-post"
             variant="outlined"
           />
         </div>
@@ -52,7 +75,7 @@ const Login = () => {
             value={password}
             onChange={({ target }) => setPassword(target.value)}
             id="outlined-password-input"
-            label="Password"
+            label="Passord"
             type="password"
             autoComplete="current-password"
             variant="outlined"
@@ -60,9 +83,25 @@ const Login = () => {
             helperText={notify}
           />
         </div>
-        <Button style={buttonStyle} variant="outlined" type="submit">
-          Register
-        </Button>
+        <div className="buttons">
+          <Button 
+          style={{width: '100%'}}
+          color="secondary" 
+          variant="contained" 
+          type="submit">
+            Logg inn
+          </Button>
+          <Link href="/users/register">
+            <a>
+              <Button 
+              style={{width: '100%', marginTop: '10px'}}
+              color="secondary" 
+              variant="outlined">
+                Registrer deg
+              </Button>
+            </a>
+          </Link>
+        </div>
       </form>
     </div>
   );

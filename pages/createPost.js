@@ -1,4 +1,4 @@
-import { useState, useRef, createRef } from "react";
+import { useState, useEffect } from "react";
 import fire from "../config/fire-config";
 import { useRouter } from "next/router";
 import uniqid from "uniqid";
@@ -9,9 +9,14 @@ const CreatePost = () => {
   const [title, setTitle] = useState("");
   const [place, setPlace] = useState("");
   const [price, setPrice] = useState(0);
+  const [miniDescription, setMiniDescription] = useState("");
   const [description, setDescription] = useState("");
-  const [imageFiles, setImageFiles] = useState([]);
-  const [imageSrcs, setImageSrcs] = useState([]);
+
+  const [imageFile, setImageFile] = useState(null);
+  const [imageSrc, setImageSrc] = useState(null);
+
+  const [user, setUser] = useState(null);
+
   const [notification, setNotification] = useState("");
 
   const router = useRouter();
@@ -19,50 +24,87 @@ const CreatePost = () => {
   //TODO: Validere input. Post må ha tittel blant annet.
   //TODO: Legge til miniDescription
 
-  const handleImageUpload = (e) => {
-    const newFiles = Array.from(e.target.files);
-    const newSrcs = [];
+  //Burde kanskje sikre at brukeren har blitt hentet fra firebase før man får begynne å lage annonsen
 
-    newFiles.forEach((file) => {
+  //Get user on page enter
+  /*
+  useEffect(() => {
+    setUser(fire.auth().currentUser);
+    const fetchUser = async () => {
+      const activeUser = await fire.auth().then((res) => {
+        return res.currentUser;
+      });
+      console.log(activeUser);
+      setUser(activeUser);
+      if (!activeUser) {
+        router.push("/users/login");
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  const getUser = async () => {
+    return await fire.auth().currentUser;
+  };
+  */
+
+  const handleImageUpload = (e) => {
+    const [file] = e.target.files;
+
+    if (file) {
       const reader = new FileReader();
 
       reader.onload = (e) => {
-        newSrcs.push(e.target.result);
-
-        //Update state when all files have been read
-        if (newSrcs.length === newFiles.length) {
-          setImageSrcs((oldSrcs) => [...oldSrcs, ...newSrcs]);
-        }
+        setImageSrc(e.target.result);
       };
       reader.readAsDataURL(file);
-    });
-    setImageFiles((oldFiles) => [...oldFiles, ...newFiles]);
+      setImageFile(file);
+    }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
+    const user = await fire.auth().currentUser;
     e.preventDefault();
-    const user = fire.auth().currentUser;
-
     if (!user) {
       setNotification("Du må logge inn først!");
-      //return;
+      //router.push("/users/login");
+      return;
     }
 
-    // Add image to storage
-    var ref = uniqid();
-    fire
+    if (
+      title.length === 0 ||
+      place.length === 0 ||
+      miniDescription === 0 ||
+      description === 0 ||
+      imageSrc === null
+    ) {
+      setNotification("Du må fylle inn alle felt!");
+      setTimeout(() => {
+        setNotification("");
+      }, 2000);
+      return;
+    }
+
+    // Add images to storage
+    const ref = uniqid();
+    const downloadUrl = await fire
       .storage()
       .ref("/images/" + ref)
-      .put(imageAsFile);
+      .put(imageFile)
+      .then((res) => {
+        return res.ref.getDownloadURL();
+      });
 
     // Create post
     var document = fire.firestore().collection("posts").add({
       title: title,
       place: place,
       price: price,
+      miniDescription: miniDescription,
       description: description,
-      //userID: user.uid,
-      imageRef: ref,
+      userID: user.uid,
+      imageUrl: downloadUrl,
     });
 
     router.push("/");
@@ -83,15 +125,13 @@ const CreatePost = () => {
         <input
           type="file"
           accept="image/*"
-          multiple={true}
+          multiple={false}
           onChange={handleImageUpload}
         />
         {/*Burde kanskje lage en egen ImageUpload component eller ImageDisplay component
         siden det kan være flere steder der man vil laste opp bilder?*/}
         {/* Vet ikke om det er greit å bare bruke indeks som key?*/}
-        {imageSrcs.map((imageSrc, index) => (
-          <img key={index} src={imageSrc} />
-        ))}
+        <img src={imageSrc} />
         Plassering:{" "}
         <input
           type="text"
@@ -105,6 +145,12 @@ const CreatePost = () => {
           min="0"
           value={price}
           onChange={({ target }) => setPrice(target.value)}
+        />
+        <br />
+        Ingress:{" "}
+        <textarea
+          value={miniDescription}
+          onChange={({ target }) => setMiniDescription(target.value)}
         />
         <br />
         Beskrivelse:{" "}
