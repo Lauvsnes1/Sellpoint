@@ -119,7 +119,7 @@ function usePosts(){
               
               <CardContent>
                   <Typography variant="body2" color="textSecondary" component="p">
-                  {post.description}
+                  {post.description} {/*Må håndtere beskrivelser som er lenger enn en linje*/}
                   </Typography>
                   <Typography style={{textAlign: "right"}}> 
                     {post.price} kr
