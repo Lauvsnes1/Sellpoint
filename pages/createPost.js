@@ -1,4 +1,4 @@
-import { useState, useRef, createRef } from "react";
+import { useState, useEffect } from "react";
 import fire from "../config/fire-config";
 import { useRouter } from "next/router";
 import uniqid from "uniqid";
@@ -9,10 +9,13 @@ const CreatePost = () => {
   const [title, setTitle] = useState("");
   const [place, setPlace] = useState("");
   const [price, setPrice] = useState(0);
+  const [miniDescription, setMiniDescription] = useState("");
   const [description, setDescription] = useState("");
 
   const [imageFile, setImageFile] = useState(null);
   const [imageSrc, setImageSrc] = useState(null);
+
+  const [user, setUser] = useState(null);
 
   const [notification, setNotification] = useState("");
 
@@ -20,6 +23,31 @@ const CreatePost = () => {
 
   //TODO: Validere input. Post må ha tittel blant annet.
   //TODO: Legge til miniDescription
+
+  //Burde kanskje sikre at brukeren har blitt hentet fra firebase før man får begynne å lage annonsen
+
+  //Get user on page enter
+  /*
+  useEffect(() => {
+    setUser(fire.auth().currentUser);
+    const fetchUser = async () => {
+      const activeUser = await fire.auth().then((res) => {
+        return res.currentUser;
+      });
+      console.log(activeUser);
+      setUser(activeUser);
+      if (!activeUser) {
+        router.push("/users/login");
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  const getUser = async () => {
+    return await fire.auth().currentUser;
+  };
+  */
 
   const handleImageUpload = (e) => {
     const [file] = e.target.files;
@@ -36,11 +64,25 @@ const CreatePost = () => {
   };
 
   const handleSubmit = async (e) => {
+    const user = await fire.auth().currentUser;
     e.preventDefault();
-    const user = fire.auth().currentUser;
-
     if (!user) {
       setNotification("Du må logge inn først!");
+      //router.push("/users/login");
+      return;
+    }
+
+    if (
+      title.length === 0 ||
+      place.length === 0 ||
+      miniDescription === 0 ||
+      description === 0 ||
+      imageSrc === null
+    ) {
+      setNotification("Du må fylle inn alle felt!");
+      setTimeout(() => {
+        setNotification("");
+      }, 2000);
       return;
     }
 
@@ -59,6 +101,7 @@ const CreatePost = () => {
       title: title,
       place: place,
       price: price,
+      miniDescription: miniDescription,
       description: description,
       userID: user.uid,
       imageUrl: downloadUrl,
@@ -102,6 +145,12 @@ const CreatePost = () => {
           min="0"
           value={price}
           onChange={({ target }) => setPrice(target.value)}
+        />
+        <br />
+        Ingress:{" "}
+        <textarea
+          value={miniDescription}
+          onChange={({ target }) => setMiniDescription(target.value)}
         />
         <br />
         Beskrivelse:{" "}
