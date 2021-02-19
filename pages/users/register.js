@@ -34,7 +34,7 @@ const Register = () => {
       .then(({ user }) => {
         const ref = fire.firestore().collection('users').doc(user.uid)
         const permissions = {user: true}
-        ref.set({firstName, lastName,  permissions})
+        ref.set({email, firstName, lastName,  permissions})
       }).then(() => router.push("/")) 
       .catch((err) => {
         if (err.code == "auth/email-already-in-use") {
