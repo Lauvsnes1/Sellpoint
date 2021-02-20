@@ -7,7 +7,7 @@ const CreatePost = () => {
   //Place er bare en streng nå, må sette opp google
   //maps ting etterhvert
   const [title, setTitle] = useState("");
-  const [place, setPlace] = useState("");
+  const [location, setLocation] = useState("");
   const [price, setPrice] = useState(0);
   const [miniDescription, setMiniDescription] = useState("");
   const [description, setDescription] = useState("");
@@ -52,7 +52,7 @@ const CreatePost = () => {
 
     if (
       title.length === 0 ||
-      place.length === 0 ||
+      location.length === 0 ||
       miniDescription === 0 ||
       description === 0 ||
       imageSrc === null
@@ -77,7 +77,7 @@ const CreatePost = () => {
     // Create post
     var document = fire.firestore().collection("posts").add({
       title: title,
-      place: place,
+      place: location,
       price: price,
       miniDescription: miniDescription,
       description: description,
@@ -96,30 +96,21 @@ const CreatePost = () => {
 
   return (
     <div>
-      <h1>Lag Annonse</h1>
+      <h1>Opprett en ny annonse:</h1>
       {notification}
       <form onSubmit={handleSubmit}>
-        Tittel:{" "}
+        Overskrift på annonsen:{" "}
         <input
           type="text"
           value={title}
           onChange={({ target }) => setTitle(target.value)}
         />
-        Bilde:{" "}
-        <input
-          type="file"
-          accept="image/*"
-          multiple={false}
-          onChange={handleImageUpload}
-        />
-        {/*Burde kanskje lage en egen ImageUpload component eller ImageDisplay component
-        siden det kan være flere steder der man vil laste opp bilder?*/}
-        <img src={imageSrc} />
+        <br />
         Plassering:{" "}
         <input
           type="text"
-          value={place}
-          onChange={({ target }) => setPlace(target.value)}
+          value={location}
+          onChange={({ target }) => setLocation(target.value)}
         />
         <br />
         Pris:{" "}
@@ -136,11 +127,24 @@ const CreatePost = () => {
           onChange={({ target }) => setMiniDescription(target.value)}
         />
         <br />
-        Beskrivelse:{" "}
+        Beskrivelse av varen:{" "}
         <textarea
           value={description}
           onChange={({ target }) => setDescription(target.value)}
         />
+        <br />
+        Last opp bilde av varen:{" "}
+        <input
+          type="file"
+          accept="image/*"
+          multiple={false}
+          onChange={handleImageUpload}
+        />
+        <br />
+        {/*Burde kanskje lage en egen ImageUpload component eller ImageDisplay component
+        siden det kan være flere steder der man vil laste opp bilder?*/}
+        {/*Skal bildet som lastes opp vises på denne siden?*/}
+        <img src={imageSrc} />
         <br />
         <button type="submit">Opprett</button>
       </form>
