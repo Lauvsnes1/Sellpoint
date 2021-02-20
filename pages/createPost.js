@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import fire from "../config/fire-config";
 import { useRouter } from "next/router";
 import uniqid from "uniqid";
@@ -21,33 +21,17 @@ const CreatePost = () => {
 
   const router = useRouter();
 
-  //TODO: Validere input. Post må ha tittel blant annet.
-  //TODO: Legge til miniDescription
-
-  //Burde kanskje sikre at brukeren har blitt hentet fra firebase før man får begynne å lage annonsen
-
-  //Get user on page enter
-  /*
   useEffect(() => {
-    setUser(fire.auth().currentUser);
-    const fetchUser = async () => {
-      const activeUser = await fire.auth().then((res) => {
-        return res.currentUser;
-      });
-      console.log(activeUser);
-      setUser(activeUser);
-      if (!activeUser) {
+    //Sets a firebase listener on initial render
+    fire.auth().onAuthStateChanged((user) => {
+      if (user) {
+        setUser(user);
+      } else {
+        //Redirects to login if user is not logged in
         router.push("/users/login");
       }
-    };
-
-    fetchUser();
+    });
   }, []);
-
-  const getUser = async () => {
-    return await fire.auth().currentUser;
-  };
-  */
 
   const handleImageUpload = (e) => {
     const [file] = e.target.files;
@@ -64,13 +48,7 @@ const CreatePost = () => {
   };
 
   const handleSubmit = async (e) => {
-    const user = await fire.auth().currentUser;
     e.preventDefault();
-    if (!user) {
-      setNotification("Du må logge inn først!");
-      //router.push("/users/login");
-      return;
-    }
 
     if (
       title.length === 0 ||
@@ -108,7 +86,13 @@ const CreatePost = () => {
     });
 
     router.push("/");
+    //Det tar litt tid før den fullfører så burde ha noe som viser at den laster ellerno
   };
+
+  //When retrieving user state from firebase
+  if (!user) {
+    return <h2>Loading...</h2>;
+  }
 
   return (
     <div>
@@ -130,7 +114,6 @@ const CreatePost = () => {
         />
         {/*Burde kanskje lage en egen ImageUpload component eller ImageDisplay component
         siden det kan være flere steder der man vil laste opp bilder?*/}
-        {/* Vet ikke om det er greit å bare bruke indeks som key?*/}
         <img src={imageSrc} />
         Plassering:{" "}
         <input
