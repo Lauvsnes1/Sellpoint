@@ -39,9 +39,14 @@ export async function getServerSideProps({ res, params }) {
   };
 }
 
+const getUser = async () => {
+    return await fire.auth().currentUser
+} 
+
 export default function Annonse({ data, userData }) {
   console.log(data);
   console.log(userData);
+  getUser().then((user) => console.log(user))
   return (
     <div>
       <style jsx>{`
