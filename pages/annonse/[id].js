@@ -70,21 +70,23 @@ export default function Annonse({ data, userData, docid }) {
         a {
           text-decoration: underline;
         }
-        .top-div{
-            margin-top: 5rem;
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
+        .top-div {
+          margin-top: 5rem;
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          align-items: center;
         }
       `}</style>
       <div className="container">
         <AppBar />
         <div className="top-div">
           <h1>{data.title}</h1>
-          <EditButton isOwner={owner} docid={docid}/>
+          <EditButton isOwner={owner} docid={docid} />
         </div>
-        <Image src={data.imageUrl} width={700} height={500} />
+        <div style={{ position: "relative", width: "700px", height: "500px" }}>
+          <Image src={data.imageUrl} layout="fill" objectFit="contain" />
+        </div>
         <p>
           <span>Lokasjon: </span> {data.place}
         </p>
@@ -114,19 +116,19 @@ export default function Annonse({ data, userData, docid }) {
 }
 
 function EditButton(props) {
-    const isOwner = props.isOwner
+  const isOwner = props.isOwner;
 
-    if (isOwner) {
-        return (
-            <Link href={`/editpost/${props.docid}`}>
-            <a>
-              <Button variant="outlined" color="secondary">
-                Rediger
-              </Button>
-            </a>
-          </Link>
-        )
-    } else {
-        return <></>
-    }
+  if (isOwner) {
+    return (
+      <Link href={`/editpost/${props.docid}`}>
+        <a>
+          <Button variant="outlined" color="secondary">
+            Rediger
+          </Button>
+        </a>
+      </Link>
+    );
+  } else {
+    return <></>;
+  }
 }
