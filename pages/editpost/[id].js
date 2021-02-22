@@ -63,7 +63,7 @@ export default function Annonse({ data, id }) {
 
   const handleDelete = async () => {
     const ref = fire.firestore().collection("posts").doc(id);
-    await ref.delete().catch((error) => console.log(error.code));
+    await ref.delete().then(router.push('/')).catch((error) => console.log(error.code));
   };
   return (
     <div>
