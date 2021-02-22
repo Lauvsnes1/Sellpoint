@@ -30,10 +30,6 @@ export async function getServerSideProps({ res, params }) {
   };
 }
 
-const getUser = async () => {
-  return await fire.auth().currentUser;
-};
-
 export default function Annonse({ data, id }) {
   const [title, setTitle] = useState(data.title);
   const [location, setLocation] = useState(data.place);
@@ -43,25 +39,32 @@ export default function Annonse({ data, id }) {
 
   const router = useRouter();
 
+  useEffect(() => {
+    fire.auth().onAuthStateChanged((user) => {
+      if (!user || user.uid != data.userID) {
+        router.push("/");
+      }
+    });
+  });
+
   const handleUpdate = async () => {
-      const ref = fire.firestore().collection('posts').doc(id);
-      await ref.update(
-          {
-              title: title,
-              place: location,
-              price: price,
-              description: description,
-              miniDescription: miniDesc
-          }
-      )
+    const ref = fire.firestore().collection("posts").doc(id);
+    await ref
+      .update({
+        title: title,
+        place: location,
+        price: price,
+        description: description,
+        miniDescription: miniDesc,
+      })
       .then(router.push(`/annonse/${id}`))
-      .catch((error) => console.log(error.code))
+      .catch((error) => console.log(error.code));
   };
 
   const handleDelete = async () => {
-    const ref = fire.firestore().collection('posts').doc(id);
-    await ref.delete().catch((error) => console.log(error.code))
-  }
+    const ref = fire.firestore().collection("posts").doc(id);
+    await ref.delete().catch((error) => console.log(error.code));
+  };
   return (
     <div>
       <style jsx>{`
@@ -84,16 +87,18 @@ export default function Annonse({ data, id }) {
           text-decoration: underline;
         }
         .buttons {
-            display: flex;
-            flex-direction: column;
+          display: flex;
+          flex-direction: column;
         }
         .textfield {
-            margin: 20px 0;
+          margin: 20px 0;
         }
       `}</style>
       <AppBar />
       <div className="container">
-        <Image src={data.imageUrl} width={600} height={400} />
+        <div style={{ position: "relative", width: "700px", height: "500px" }}>
+          <Image src={data.imageUrl} layout="fill" objectFit="contain" />
+        </div>
         <form onSubmit={handleUpdate}>
           <div className="textfield">
             <TextField
@@ -157,7 +162,12 @@ export default function Annonse({ data, id }) {
             </Button>
 
             <Button
-              style={{ width: "200px", marginTop: "10px", color: "#FF1744", borderColor: '#FF1744' }}
+              style={{
+                width: "200px",
+                marginTop: "10px",
+                color: "#FF1744",
+                borderColor: "#FF1744",
+              }}
               variant="outlined"
               onClick={handleDelete}
             >
