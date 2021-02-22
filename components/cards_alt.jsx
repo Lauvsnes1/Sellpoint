@@ -71,7 +71,6 @@ function usePosts(){
   return posts
 }
 
-  
 
  const PostCards = () => {
  const posts = usePosts();
@@ -87,6 +86,7 @@ function usePosts(){
     <ThemeProvider theme ={theme}>
       <div className={styles.annonseContainer}>
       {posts.map((post) => 
+
           <Card className={classes.root}>
             
               
@@ -98,7 +98,11 @@ function usePosts(){
 
                   avatar={
                   <Avatar aria-label="recipe" className={classes.avatar}>
-                      <Image layout='fill' src='/Meg.jpg'/>{/*legg inn profilbilde til selger her eller initialer*/ }
+                      
+                      
+                      {/*legg inn profilbilde til selger her eller initialer*/ }
+                      AV
+                      
                   </Avatar>
                   
                   } 
@@ -128,7 +132,7 @@ function usePosts(){
               </CardContent>
               <CardActions style={{height: "20px", }}>
                 <Button size="small" variant = 'outlined' color='secondary' marginRight = "30px" display="inline-block">
-                  Annonse
+                  <Link href={'/annonse/'+{post.key()}} passHref><a>Annonse</a></Link>
                 </Button>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
