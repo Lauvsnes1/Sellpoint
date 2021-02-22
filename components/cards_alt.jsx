@@ -14,6 +14,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import styles from '../styles/Home.module.css'
 import { colors, ThemeProvider} from '@material-ui/core';
 import Image from 'next/image';
+import Link from 'next/Link'
 
 
 const useStyles = makeStyles(() => ({
@@ -127,12 +128,13 @@ function usePosts(){
                   </Typography>
                   <Typography style={{textAlign: "right"}}> 
                     {post.price} kr
+
                     
                   </Typography>
               </CardContent>
               <CardActions style={{height: "20px", }}>
                 <Button size="small" variant = 'outlined' color='secondary' marginRight = "30px" display="inline-block">
-                  <Link href={'/annonse/'+{post.key()}} passHref><a>Annonse</a></Link>
+                  <Link href={'/annonse/'+post.id} passHref><a>Annonse</a></Link>
                 </Button>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
