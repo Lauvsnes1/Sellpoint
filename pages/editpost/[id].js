@@ -30,10 +30,6 @@ export async function getServerSideProps({ res, params }) {
   };
 }
 
-const getUser = async () => {
-  return await fire.auth().currentUser;
-};
-
 export default function Annonse({ data, id }) {
   const [title, setTitle] = useState(data.title);
   const [location, setLocation] = useState(data.place);
@@ -42,6 +38,15 @@ export default function Annonse({ data, id }) {
   const [miniDesc, setMiniDesc] = useState(data.miniDescription);
 
   const router = useRouter();
+
+  useEffect(() => {
+    fire.auth().onAuthStateChanged((user) => {
+        if (!user || user.uid != data.userID) {
+          router.push("/")
+        }
+    })
+  })
+
 
   const handleUpdate = async () => {
       const ref = fire.firestore().collection('posts').doc(id);
