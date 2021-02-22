@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import fire from "../config/fire-config";
 import { useRouter } from "next/router";
 import uniqid from "uniqid";
@@ -83,6 +83,7 @@ const CreatePost = () => {
       description: description,
       userID: user.uid,
       imageUrl: downloadUrl,
+      imageRef: ref,
     });
 
     router.push("/");
