@@ -25,7 +25,7 @@ const useStyles = makeStyles(() => ({
     root: {
       minWidth: 330,
       maxWidth: 330,
-      height: 390,
+      height: 375,
       marginTop: 30,
       alignItems: 'flex-start',
 
@@ -118,31 +118,24 @@ function usePosts(){
               
               
               <CardContent>
-                  <Typography variant="body2" color="textSecondary" component="p">
-                  {post.description} {/*Må håndtere beskrivelser som er lenger enn en linje*/}
+                  <Typography variant="body2" color="textSecondary" component="p" style={{height: "25px", lineHeight: "25px", overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis"}}>
+                  {post.miniDescription}
                   </Typography>
                   <Typography style={{textAlign: "right"}}> 
                     {post.price} kr
                     
                   </Typography>
               </CardContent>
-              <CardActions>
-                
-                <div style={{margin: 'auto', justifyContent: 'space-around', width: 'full'}}>
-        
-                <Button size="small" variant = 'outlined' color='secondary' >
+              <CardActions style={{height: "20px", }}>
+                <Button size="small" variant = 'outlined' color='secondary' marginRight = "30px" display="inline-block">
                   Annonse
                 </Button>
-              
-                
-                
-            
-                <Button size="small" variant = 'outlined' color='secondary'>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <Button size="small" variant = 'outlined' color='secondary' marginLeft = "30px" display="inline-block">
                   Selger
                 </Button>
-              
-                </div>
-        
               </CardActions>
 
             </div>
