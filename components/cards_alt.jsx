@@ -64,11 +64,11 @@ function usePosts(){
       const newPosts = snapShot.docs.map((doc) =>({
         id: doc.id,
         ...doc.data()
+
       }) )
       setPost(newPosts);
     } )
   }, [])
-  
   return posts
 }
 
@@ -99,11 +99,7 @@ function usePosts(){
 
                   avatar={
                   <Avatar aria-label="recipe" className={classes.avatar}>
-                      
-                      
-                      {/*legg inn profilbilde til selger her eller initialer*/ }
-                      AV
-                      
+                  {/*firebase.firestore().collection('users').doc(post.userID).get().firstName*/}  
                   </Avatar>
                   
                   } 
