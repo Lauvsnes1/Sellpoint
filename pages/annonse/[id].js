@@ -1,6 +1,9 @@
 import fire from "../../config/fire-config";
 import Image from "next/image";
 import AppBar from "../../components/header";
+import { useState } from "react";
+import { Button } from "@material-ui/core";
+import Link from "next/link";
 
 export async function getServerSideProps({ res, params }) {
   const documentData = await fire
@@ -33,20 +36,20 @@ export async function getServerSideProps({ res, params }) {
 
   return {
     props: {
+      docid: params.id,
       data: documentData,
       userData: userData,
     },
   };
 }
 
-const getUser = async () => {
-    return await fire.auth().currentUser
-} 
-
-export default function Annonse({ data, userData }) {
-  console.log(data);
-  console.log(userData);
-  getUser().then((user) => console.log(user))
+export default function Annonse({ data, userData, docid }) {
+  const [owner, setOwner] = useState(false);
+  fire.auth().onAuthStateChanged((user) => {
+    if (user) {
+      setOwner(data.userID == user.uid);
+    }
+  });
   return (
     <div>
       <style jsx>{`
@@ -56,7 +59,6 @@ export default function Annonse({ data, userData }) {
           margin: auto;
         }
         h1 {
-          margin-top: 5rem;
           font-family: "helvetica neue";
           font-size: 48pt;
           font-weight: normal;
@@ -68,11 +70,21 @@ export default function Annonse({ data, userData }) {
         a {
           text-decoration: underline;
         }
+        .top-div{
+            margin-top: 5rem;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+        }
       `}</style>
       <div className="container">
         <AppBar />
-        <h1>{data.title}</h1>
-        <Image src={data.imageUrl} width={600} height={400} />
+        <div className="top-div">
+          <h1>{data.title}</h1>
+          <EditButton isOwner={owner} docid={docid}/>
+        </div>
+        <Image src={data.imageUrl} width={700} height={500} />
         <p>
           <span>Lokasjon: </span> {data.place}
         </p>
@@ -99,4 +111,22 @@ export default function Annonse({ data, userData }) {
       </div>
     </div>
   );
+}
+
+function EditButton(props) {
+    const isOwner = props.isOwner
+
+    if (isOwner) {
+        return (
+            <Link href={`/editpost/${props.docid}`}>
+            <a>
+              <Button variant="outlined" color="secondary">
+                Rediger
+              </Button>
+            </a>
+          </Link>
+        )
+    } else {
+        return <></>
+    }
 }
