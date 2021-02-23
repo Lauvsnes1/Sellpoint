@@ -80,6 +80,7 @@ const useStyles = makeStyles((theme) => ({
                   keepMounted
                   open={Boolean(anchorEl)}
                   onClose={handleClose}
+                  
                 >
                   <MenuItem onClick={handleClose}>Profil</MenuItem>
                   <MenuItem onClick={handleClose} color='red'>Logg ut</MenuItem>
