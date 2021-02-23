@@ -36,8 +36,12 @@ export default function Annonse({ data, id }) {
   const [price, setPrice] = useState(data.price);
   const [description, setDescription] = useState(data.description);
   const [miniDesc, setMiniDesc] = useState(data.miniDescription);
+  const [imgFile, setImageFile] = useState("");
+  const [imageSrc, setImageSrc] = useState(data.imageUrl);
 
   const router = useRouter();
+
+  let storageRef = "";
 
   useEffect(() => {
     fire.auth().onAuthStateChanged((user) => {
@@ -45,25 +49,56 @@ export default function Annonse({ data, id }) {
         router.push("/");
       }
     });
+    storageRef = fire
+      .storage()
+      .ref()
+      .child("/images/" + data.imageRef);
   });
 
   const handleUpdate = async () => {
-    const ref = fire.firestore().collection("posts").doc(id);
-    await ref
+    const downlaoadURl = await storageRef
+      .put(imgFile)
+      .then((res) => {
+        return res.ref.getDownloadURL();
+      })
+      .catch((err) => console.log(err.code));
+    await fire
+      .firestore()
+      .collection("posts")
+      .doc(id)
       .update({
         title: title,
         place: location,
         price: price,
         description: description,
         miniDescription: miniDesc,
+        imageUrl: downlaoadURl,
       })
       .then(router.push(`/annonse/${id}`))
       .catch((error) => console.log(error.code));
   };
 
+  const handleChangeImage = (e) => {
+    const [file] = e.target.files;
+
+    if (file) {
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        setImageSrc(e.target.result);
+      };
+      reader.readAsDataURL(file);
+      setImageFile(file);
+    }
+  };
+
   const handleDelete = async () => {
     const ref = fire.firestore().collection("posts").doc(id);
-    await ref.delete().then(router.push('/')).catch((error) => console.log(error.code));
+    await storageRef.delete().catch((err) => console.log(err.code));
+    await ref
+      .delete()
+      .then(router.push("/"))
+      .catch((error) => console.log(error.code));
   };
   return (
     <div>
@@ -97,7 +132,27 @@ export default function Annonse({ data, id }) {
       <AppBar />
       <div className="container">
         <div style={{ position: "relative", width: "700px", height: "500px" }}>
-          <Image src={data.imageUrl} layout="fill" objectFit="contain" />
+          <Image src={imageSrc} layout="fill" objectFit="contain" />
+          <Button
+            style={{
+              width: "200px",
+              position: "absolute",
+              top: "226px",
+              left: "244px",
+            }}
+            variant="contained"
+            color="secondary"
+            component="label"
+          >
+            Endre bilde
+            <input
+              type="file"
+              accept="image/*"
+              multiple={false}
+              onChange={handleChangeImage}
+              hidden
+            />
+          </Button>
         </div>
         <form onSubmit={handleUpdate}>
           <div className="textfield">
