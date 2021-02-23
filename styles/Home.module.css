@@ -5,6 +5,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  
 }
 
 .main {
@@ -79,6 +80,34 @@
   max-width: 800px;
   margin-top: 3rem;
 }
+
+.annonseContainer{
+  display: flex;
+  align-items: flex-start;
+  flex-direction: row;
+  max-width: 1100px;
+  min-width: 1100px;
+  justify-content: space-around;
+  align-content: space-around;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+
+
+}
+.rad{
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  max-width: 1100px;
+  min-width: 1100px;
+  padding-top: 100px;
+  justify-content: space-around;
+  align-content: space-around;
+  
+  
+}
+
+
 
 .card {
   margin: 1rem;
