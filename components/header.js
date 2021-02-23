@@ -1,4 +1,5 @@
 import React from 'react';
+import {useState, useEffect} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -12,6 +13,7 @@ import Link from 'next/link'
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import fire from '../config/fire-config';
+import { useRouter } from 'next/router'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -42,9 +44,26 @@ const useStyles = makeStyles((theme) => ({
 
   
   export default function ButtonAppBar() {
+
+    const [user, setUser] = useState(null);
+    const [loggedInn, setloggedInn] = useState('blank');
     const classes = useStyles();
-  
-  const [anchorEl, setAnchorEl] = React.useState(null);
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const router = useRouter();
+
+    useEffect(() => {
+      //Sets a firebase listener on initial render
+      fire.auth().onAuthStateChanged((user) => {
+        if (user) {
+          setUser(user);
+          setloggedInn('Logg ut');
+        }
+        else{
+          setloggedInn('Logg inn')
+        } 
+      });
+    }, []);
+
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -53,14 +72,20 @@ const useStyles = makeStyles((theme) => ({
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const HandelLogOut = () => {
+  const handelLogInChange = () => {
+    if(user){
     fire.auth().signOut().then(() => {
-      // logget ut 
+      handleClose(); //kollapser menyen
+      router.reload();
+      // logget ut
     }).catch((error) => {
       // Error
-    });
-    
+    })}
 
+    else{
+      router.push('/users/login');
+      //redirect til login siden
+    }
   };
 
     return (
@@ -90,7 +115,7 @@ const useStyles = makeStyles((theme) => ({
                   
                 >
                   <MenuItem onClick={handleClose}>Profil</MenuItem>
-                  <MenuItem onClick={HandelLogOut, handleClose} color='red'>Logg ut</MenuItem>
+                  <MenuItem onClick={handelLogInChange} color='red'>{loggedInn}</MenuItem>
                   </Menu>
                 </div>
                 </Toolbar>
