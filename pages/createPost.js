@@ -130,7 +130,13 @@ const CreatePost = () => {
       <AppBar />
       <div className="container">
         {notification}
-        {imageSrc && <Image src={imageSrc} width={600} height={400} />}
+        {imageSrc && (
+          <div
+            style={{ position: "relative", width: "700px", height: "500px" }}
+          >
+            <Image src={imageSrc} layout="fill" objectFit="contain" />
+          </div>
+        )}
         <div className="buttons">
           <Button
             style={{ width: "200px" }}
