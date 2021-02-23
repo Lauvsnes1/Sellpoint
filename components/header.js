@@ -11,6 +11,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import fire from '../config/fire-config';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -52,7 +53,13 @@ const useStyles = makeStyles((theme) => ({
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const logOut = () => {
+  const HandelLogOut = () => {
+    fire.auth().signOut().then(() => {
+      // logget ut 
+    }).catch((error) => {
+      // Error
+    });
+    
 
   };
 
@@ -83,7 +90,7 @@ const useStyles = makeStyles((theme) => ({
                   
                 >
                   <MenuItem onClick={handleClose}>Profil</MenuItem>
-                  <MenuItem onClick={handleClose} color='red'>Logg ut</MenuItem>
+                  <MenuItem onClick={HandelLogOut, handleClose} color='red'>Logg ut</MenuItem>
                   </Menu>
                 </div>
                 </Toolbar>
