@@ -2,14 +2,16 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
 import { colors, ThemeProvider} from '@material-ui/core';
 import { green, blue, yellow, darkGreen, lightGreen }from '@material-ui/core/colors/green'
+import {red}from '@material-ui/core/colors'
 import theme from '../src/theme';
 import Image from 'next/image'
 import Link from 'next/link'
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -34,28 +36,54 @@ const useStyles = makeStyles((theme) => ({
     }
   }));
 
+  
+
 
   
   export default function ButtonAppBar() {
     const classes = useStyles();
+  
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const logOut = () => {
+
+  };
 
     return (
         <ThemeProvider theme={theme}>
             <div className={classes.root}>
-            <AppBar color='primary' variant= 'elevation'>
+            <AppBar color='primary' variant= 'elevation' position='fixed'>
                 <Toolbar>
                 <div>
                 <Link href={'/'}>
                 <a>
-                <Image src='/Logo.png' height={75} width={150}/>
+                <Image src='/Logo.png' height={60} width={200} paddingTop='100px'/>
                 </a>
                 </Link>
                 </div>
-                <div style={{width: 1440, flexDirection: 'row', justifySelf: 'flex-end', paddingLeft: 650}}>
+                <div style={{width: 1440, flexDirection: 'row', justifySelf: 'flex-end', paddingLeft: 600}}>
                 <Button className = {classes.button}> <Link href={'/createPost'}>Opprett annonse</Link></Button>
                 <Button className = {classes.button}> Mine annonser</Button>
                 <Button className = {classes.button}> Mine favoritter</Button>
-                <Button className = {classes.button} variant = 'outlined' color='secondary'> Min profil</Button>
+                <Button className = {classes.button} variant = 'outlined' color='secondary'
+                 aria_controls='simple-menu' aria-haspopup="true" onClick={handleClick}> Min profil</Button>
+                 <Menu
+                  id="simple-menu"
+                  anchorEl={anchorEl}
+                  keepMounted
+                  open={Boolean(anchorEl)}
+                  onClose={handleClose}
+                >
+                  <MenuItem onClick={handleClose}>Profil</MenuItem>
+                  <MenuItem onClick={handleClose} color='red'>Logg ut</MenuItem>
+                  </Menu>
                 </div>
                 </Toolbar>
             </AppBar>
