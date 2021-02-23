@@ -14,7 +14,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import styles from '../styles/Home.module.css'
 import { colors, ThemeProvider} from '@material-ui/core';
 import Image from 'next/image';
-import Link from 'next/Link'
+import Link from 'next/link'
 
 
 const useStyles = makeStyles(() => ({
