@@ -38,6 +38,7 @@ export default function Annonse({ data, id }) {
   const [miniDesc, setMiniDesc] = useState(data.miniDescription);
   const [imgFile, setImageFile] = useState("");
   const [imageSrc, setImageSrc] = useState(data.imageUrl);
+  const [imageChanged, setImageChanged] = useState(false);
 
   const router = useRouter();
 
@@ -56,12 +57,14 @@ export default function Annonse({ data, id }) {
   });
 
   const handleUpdate = async () => {
-    const downlaoadURl = await storageRef
+    const downlaoadURl = imageChanged? await storageRef
       .put(imgFile)
       .then((res) => {
         return res.ref.getDownloadURL();
       })
-      .catch((err) => console.log(err.code));
+      .catch((err) => console.log(err.code))
+      :
+      data.imageUrl;
     await fire
       .firestore()
       .collection("posts")
@@ -89,6 +92,7 @@ export default function Annonse({ data, id }) {
       };
       reader.readAsDataURL(file);
       setImageFile(file);
+      setImageChanged(true);
     }
   };
 
