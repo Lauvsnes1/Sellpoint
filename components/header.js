@@ -96,7 +96,7 @@ const useStyles = makeStyles((theme) => ({
                 <div>
                 <Link href={'/'}>
                 <a>
-                <Image src='/Logo.png' height={60} width={200} paddingTop='100px'/>
+                <Image src='/Logo.png' height={45} width={197} paddingTop='100px'/>
                 </a>
                 </Link>
                 </div>
