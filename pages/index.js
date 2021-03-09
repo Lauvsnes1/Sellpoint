@@ -5,6 +5,7 @@ import Card from "../components/cards";
 import PostCards from "../components/cards_alt";
 import fire from "../config/fire-config";
 import { useEffect, useState } from "react";
+import PriceRangeSlider from "../components/filters"
 
 export default function Home() {
   const [admin, setAdmin] = useState(false);
@@ -22,8 +23,13 @@ export default function Home() {
   });
 
   return (
+    
+    <>
     <div className={styles.container}>
       <AppBar />
+      <div>
+      <PriceRangeSlider/>
+      </div>
       <div className={styles.rad}>
         <div className={styles.annonseContainer}>
           <AdminHeadLine admin={admin} />
@@ -31,6 +37,7 @@ export default function Home() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 
