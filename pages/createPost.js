@@ -6,6 +6,7 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { useRouter } from "next/router";
 import uniqid from "uniqid";
+import ImageUpload from "../components/image_upload"
 
 const CreatePost = () => {
   //Place er bare en streng nå, må sette opp google
@@ -24,6 +25,12 @@ const CreatePost = () => {
   const [notification, setNotification] = useState("");
 
   const router = useRouter();
+
+
+  //TEST
+  const [imageFiles, setImageFiles] = useState([])
+  const [imageSrcs, setImageSrcs] = useState([])
+
 
   useEffect(() => {
     //Sets a firebase listener on initial render
@@ -50,6 +57,8 @@ const CreatePost = () => {
       setImageFile(file);
     }
   };
+
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -137,7 +146,9 @@ const CreatePost = () => {
             <Image src={imageSrc} layout="fill" objectFit="contain" />
           </div>
         )}
-        <div className="buttons">
+        <ImageUpload imageFile={imageFile} setImageFile={(file) => setImageFile(file)} 
+          imageSrc={imageSrc} setImageSrc={(src) => setImageSrc(src)} text="Last opp bilde av varen"/>
+        {/*<div className="buttons">
           <Button
             style={{ width: "200px" }}
             color="secondary"
@@ -153,7 +164,7 @@ const CreatePost = () => {
               hidden
             />
           </Button>
-        </div>
+        </div>*/}
         <form onSubmit={handleSubmit}>
           <div className="textfield">
             <TextField
