@@ -6,7 +6,7 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { useRouter } from "next/router";
 import uniqid from "uniqid";
-import ImageUpload from "../components/image_upload"
+import ImageUpload from "../components/image_upload";
 
 const CreatePost = () => {
   //Place er bare en streng nå, må sette opp google
@@ -23,14 +23,12 @@ const CreatePost = () => {
   const [user, setUser] = useState(null);
 
   const [notification, setNotification] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const router = useRouter();
 
-
-  //TEST
-  const [imageFiles, setImageFiles] = useState([])
-  const [imageSrcs, setImageSrcs] = useState([])
-
+  const [imageFiles, setImageFiles] = useState([]);
+  const [imageSrcs, setImageSrcs] = useState([]);
 
   useEffect(() => {
     //Sets a firebase listener on initial render
@@ -58,8 +56,6 @@ const CreatePost = () => {
     }
   };
 
-  
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -68,7 +64,7 @@ const CreatePost = () => {
       location.length === 0 ||
       miniDescription === 0 ||
       description === 0 ||
-      imageSrc === null
+      imageSrcs.length === 0
     ) {
       setNotification("Du må fylle inn alle felt!");
       setTimeout(() => {
@@ -77,6 +73,8 @@ const CreatePost = () => {
       return;
     }
 
+    setLoading(true);
+    /*
     // Add images to storage
     const ref = uniqid();
     const downloadUrl = await fire
@@ -86,6 +84,13 @@ const CreatePost = () => {
       .then((res) => {
         return res.ref.getDownloadURL();
       });
+    */
+
+    const imagesInfo = await ImageUpload.firebaseUpload(imageFiles).then(
+      (res) => {
+        return res;
+      }
+    );
 
     // Create post
     var document = await fire.firestore().collection("posts").add({
@@ -95,15 +100,15 @@ const CreatePost = () => {
       miniDescription: miniDescription,
       description: description,
       userID: user.uid,
-      imageUrl: downloadUrl,
-      imageRef: ref,
+      imagesInfo: imagesInfo,
     });
+
     router.push("/annonse/" + document.id);
     //Det tar litt tid før den fullfører så burde ha noe som viser at den laster ellerno
   };
 
   //When retrieving user state from firebase
-  if (!user) {
+  if (!user || loading) {
     return <h2>Loading...</h2>;
   }
 
@@ -139,15 +144,20 @@ const CreatePost = () => {
       <AppBar />
       <div className="container">
         {notification}
-        {imageSrc && (
-          <div
-            style={{ position: "relative", width: "700px", height: "500px" }}
-          >
-            <Image src={imageSrc} layout="fill" objectFit="contain" />
-          </div>
-        )}
-        <ImageUpload imageFile={imageFile} setImageFile={(file) => setImageFile(file)} 
-          imageSrc={imageSrc} setImageSrc={(src) => setImageSrc(src)} text="Last opp bilde av varen"/>
+        {imageSrcs.length != 0 &&
+          imageSrcs.map((imageSrc, index) => (
+            <div
+              key={index}
+              style={{ position: "relative", width: "700px", height: "500px" }}
+            >
+              <Image src={imageSrc} layout="fill" objectFit="contain" />
+            </div>
+          ))}
+        <ImageUpload
+          setImageFiles={(files) => setImageFiles(files)}
+          setImageSrcs={(srcs) => setImageSrcs(srcs)}
+          text="Last opp bilde av varen"
+        />
         {/*<div className="buttons">
           <Button
             style={{ width: "200px" }}
@@ -177,6 +187,7 @@ const CreatePost = () => {
             />
           </div>
           <div className="textfield">
+            {/*Man skal kun skrive tall inn for pris, nå kan man skrive hva som helst*/}
             <TextField
               value={location}
               onChange={({ target }) => setLocation(target.value)}
