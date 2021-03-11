@@ -6,7 +6,7 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { useRouter } from "next/router";
 import ImageUpload from "../components/image_upload";
-import ImageDisplay from "../components/image_display";
+import ImageContainer from "../components/image_container";
 
 const CreatePost = () => {
   //Place er bare en streng nå, må sette opp google
@@ -153,7 +153,7 @@ const CreatePost = () => {
               <Image src={imageSrc} layout="fill" objectFit="contain" />
             </div>
           ))*/}
-        <ImageDisplay imageSrcs={imageSrcs} />
+        <ImageContainer imageSrcs={imageSrcs} setImageSrcs={setImageSrcs} />
         <ImageUpload
           setImageFiles={(files) => setImageFiles(files)}
           setImageSrcs={(srcs) => setImageSrcs(srcs)}
