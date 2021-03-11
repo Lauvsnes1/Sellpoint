@@ -5,8 +5,8 @@ import AppBar from "../components/header";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { useRouter } from "next/router";
-import uniqid from "uniqid";
 import ImageUpload from "../components/image_upload";
+import ImageDisplay from "../components/image_display";
 
 const CreatePost = () => {
   //Place er bare en streng nå, må sette opp google
@@ -144,7 +144,7 @@ const CreatePost = () => {
       <AppBar />
       <div className="container">
         {notification}
-        {imageSrcs.length != 0 &&
+        {/*imageSrcs.length != 0 &&
           imageSrcs.map((imageSrc, index) => (
             <div
               key={index}
@@ -152,7 +152,8 @@ const CreatePost = () => {
             >
               <Image src={imageSrc} layout="fill" objectFit="contain" />
             </div>
-          ))}
+          ))*/}
+        <ImageDisplay imageSrcs={imageSrcs} />
         <ImageUpload
           setImageFiles={(files) => setImageFiles(files)}
           setImageSrcs={(srcs) => setImageSrcs(srcs)}
