@@ -8,14 +8,14 @@ import TextField from '@material-ui/core/TextField';
 import { TableRow } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((Theme) => ({
     textInputContainer:{
         width: 1000,
         flexDirection: 'row',
         justifyContent: 'space-between',
 
     }
-});
+}));
 const PriceSlider = withStyles({
     root: {
     marginTop: 20,
@@ -56,42 +56,42 @@ const PriceSlider = withStyles({
     return `${value}kr`;
   }
   
-  export default function PriceRangeSlider() {
+  export default function PriceRangeSlider(props) {
     const classes = useStyles();
     const [key, setKey] = useState(0);
     const [minValue, setMinValue] = useState(0);
-    const [maxValue, setMaxValue] = useState(0);
-    const [value, setValue] = useState([10000, 50000]);
+    const [maxValue, setMaxValue] = useState(100);
+    //const [value, setValue] = useState([10000, 50000]);
 
     useEffect(() => {
-      setKey(1);
-    }, []);
-    
-    
-  
-    const handleChange = (event, newValue) => {
-      setValue(newValue);
+      console.log(minValue)
+      props.getValues(minValue,maxValue)
       
-    };
+    }, [minValue,maxValue]);
+    
+    
 
-    const handleChangealt = (minvalue, maxvalue) => {
-        setMaxValue(maxvalue);
-        setMinValue(minvalue);
-        setValue([minvalue,maxvalue]);
+    const handleChangealt = (minValue, maxValue) => {
+        setMaxValue(maxValue);
+        setMinValue(minValue);
+        console.log(maxValue)
+        //setValue([minvalue,maxvalue]);
     };
   
     return (
-      <div>
+      <div style={{paddingTop: 100}}>
         <Typography id="range-slider" gutterBottom style={{ justifyContent: 'center'}}>
           Prisområde:
         </Typography>
         <div className={classes.textInputContainer} >
         <TextField id="outlined-basic" label="Min pris" variant="outlined" />
         <TextField id="outlined-basic" label="Max pris" variant="outlined"  />
-        <Button variant="contained" onClick={handleChangealt}>submit</Button>
+        <Button variant="contained" 
+        onClick={handleChangealt}
+        color='secondary'>Søk</Button>
         </div>
 
-        <PriceSlider 
+       {/* <PriceSlider 
           key={key}
           value={value}
           onChange={handleChange}
@@ -101,7 +101,7 @@ const PriceSlider = withStyles({
           max = {100000}
           min ={1}
           step={10}
-        />
+       /> */}
       </div>
     );
   }

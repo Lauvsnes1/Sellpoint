@@ -14,7 +14,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import styles from '../styles/Home.module.css'
 import { colors, ThemeProvider} from '@material-ui/core';
 import Image from 'next/image';
-import Link from 'next/link'
+import Link from 'next/link';
+import PriceRangeSlider from "../components/filters";
 
 
 const useStyles = makeStyles(() => ({
@@ -54,7 +55,6 @@ const useStyles = makeStyles(() => ({
 
 function usePosts(){
   const [posts, setPost] = useState([])
-
   useEffect(() => {
     firebase
     .firestore()
@@ -72,19 +72,24 @@ function usePosts(){
   return posts
 }
 
+ 
 
  const PostCards = () => {
  const posts = usePosts();
-
+ const [minValue, setMinValue] = useState(0);
+ const [maxValue, setMaxValue] = useState(0);
 
   const classes = useStyles();
   const [postId,setPostId] = useState('');
   
-  
+  function handleSlider(minValue, maxValue){
+    setMinValue(minValue);
+    setMaxValue(maxValue);
+  }
     
-
     return (
     <ThemeProvider theme ={theme}>
+      <PriceRangeSlider getValues={handleSlider}/>
       <div className={styles.annonseContainer}>
       {posts.map((post) => 
 
