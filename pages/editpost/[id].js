@@ -57,14 +57,14 @@ export default function Annonse({ data, id }) {
   });
 
   const handleUpdate = async () => {
-    const downlaoadURl = imageChanged? await storageRef
-      .put(imgFile)
-      .then((res) => {
-        return res.ref.getDownloadURL();
-      })
-      .catch((err) => console.log(err.code))
-      :
-      data.imageUrl;
+    const downlaoadURl = imageChanged
+      ? await storageRef
+          .put(imgFile)
+          .then((res) => {
+            return res.ref.getDownloadURL();
+          })
+          .catch((err) => console.log(err.code))
+      : data.imageUrl;
     await fire
       .firestore()
       .collection("posts")
@@ -98,6 +98,7 @@ export default function Annonse({ data, id }) {
 
   const handleDelete = async () => {
     const ref = fire.firestore().collection("posts").doc(id);
+
     await storageRef.delete().catch((err) => console.log(err.code));
     await ref
       .delete()
