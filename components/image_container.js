@@ -3,7 +3,6 @@ import GridList from "@material-ui/core/GridList";
 import Image from "next/image";
 
 const ImageContainer = ({ imageSrcs, deleteImage }) => {
-  console.log(imageSrcs);
   return (
     <GridList cellHeight={160} cols={3}>
       {imageSrcs.map((src, index) => (
