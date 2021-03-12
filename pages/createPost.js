@@ -17,9 +17,6 @@ const CreatePost = () => {
   const [miniDescription, setMiniDescription] = useState("");
   const [description, setDescription] = useState("");
 
-  const [imageFile, setImageFile] = useState(null);
-  const [imageSrc, setImageSrc] = useState(null);
-
   const [user, setUser] = useState(null);
 
   const [notification, setNotification] = useState("");
@@ -27,8 +24,7 @@ const CreatePost = () => {
 
   const router = useRouter();
 
-  const [imageFiles, setImageFiles] = useState([]);
-  const [imageSrcs, setImageSrcs] = useState([]);
+  const [images, setImages] = useState([]);
 
   useEffect(() => {
     //Sets a firebase listener on initial render
@@ -42,20 +38,6 @@ const CreatePost = () => {
     });
   }, []);
 
-  const handleImageUpload = (e) => {
-    const [file] = e.target.files;
-
-    if (file) {
-      const reader = new FileReader();
-
-      reader.onload = (e) => {
-        setImageSrc(e.target.result);
-      };
-      reader.readAsDataURL(file);
-      setImageFile(file);
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -64,7 +46,7 @@ const CreatePost = () => {
       location.length === 0 ||
       miniDescription === 0 ||
       description === 0 ||
-      imageSrcs.length === 0
+      images.length === 0
     ) {
       setNotification("Du må fylle inn alle felt!");
       setTimeout(() => {
@@ -74,23 +56,12 @@ const CreatePost = () => {
     }
 
     setLoading(true);
-    /*
-    // Add images to storage
-    const ref = uniqid();
-    const downloadUrl = await fire
-      .storage()
-      .ref("/images/" + ref)
-      .put(imageFile)
-      .then((res) => {
-        return res.ref.getDownloadURL();
-      });
-    */
 
-    const imagesInfo = await ImageUpload.firebaseUpload(imageFiles).then(
-      (res) => {
-        return res;
-      }
-    );
+    const imagesRef = await ImageUpload.firebaseUpload(
+      images.map((image) => image.file)
+    ).then((res) => {
+      return res;
+    });
 
     // Create post
     var document = await fire.firestore().collection("posts").add({
@@ -100,14 +71,12 @@ const CreatePost = () => {
       miniDescription: miniDescription,
       description: description,
       userID: user.uid,
-      imagesInfo: imagesInfo,
+      imagesRef: imagesRef,
     });
 
     router.push("/annonse/" + document.id);
-    //Det tar litt tid før den fullfører så burde ha noe som viser at den laster ellerno
   };
 
-  //When retrieving user state from firebase
   if (!user || loading) {
     return <h2>Loading...</h2>;
   }
@@ -144,38 +113,16 @@ const CreatePost = () => {
       <AppBar />
       <div className="container">
         {notification}
-        {/*imageSrcs.length != 0 &&
-          imageSrcs.map((imageSrc, index) => (
-            <div
-              key={index}
-              style={{ position: "relative", width: "700px", height: "500px" }}
-            >
-              <Image src={imageSrc} layout="fill" objectFit="contain" />
-            </div>
-          ))*/}
-        <ImageContainer imageSrcs={imageSrcs} setImageSrcs={setImageSrcs} />
+        <ImageContainer
+          imageSrcs={images.map((image) => image.src)}
+          deleteImage={(index) =>
+            setImages((oldImages) => oldImages.filter((src, i) => i != index))
+          }
+        />
         <ImageUpload
-          setImageFiles={(files) => setImageFiles(files)}
-          setImageSrcs={(srcs) => setImageSrcs(srcs)}
+          setImages={(images) => setImages(images)}
           text="Last opp bilde av varen"
         />
-        {/*<div className="buttons">
-          <Button
-            style={{ width: "200px" }}
-            color="secondary"
-            variant="contained"
-            component="label"
-          >
-            Last opp bilde av varen
-            <input
-              type="file"
-              accept="image/*"
-              multiple={false}
-              onChange={handleImageUpload}
-              hidden
-            />
-          </Button>
-        </div>*/}
         <form onSubmit={handleSubmit}>
           <div className="textfield">
             <TextField
@@ -233,8 +180,7 @@ const CreatePost = () => {
               style={{ width: "200px" }}
               color="secondary"
               variant="contained"
-              //type="submit"
-              onClick={handleSubmit}
+              type="submit"
             >
               Opprett annonse
             </Button>

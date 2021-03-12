@@ -1,9 +1,9 @@
 import fire from "../../config/fire-config";
-import Image from "next/image";
 import AppBar from "../../components/header";
 import { useState } from "react";
 import { Button } from "@material-ui/core";
 import Link from "next/link";
+import ImageContainer from "../../components/image_container";
 
 export async function getServerSideProps({ res, params }) {
   const documentData = await fire
@@ -84,9 +84,9 @@ export default function Annonse({ data, userData, docid }) {
           <h1>{data.title}</h1>
           <EditButton isOwner={owner} docid={docid} />
         </div>
-        <div style={{ position: "relative", width: "700px", height: "500px" }}>
-          <Image src={data.imageUrl} layout="fill" objectFit="contain" />
-        </div>
+        <ImageContainer
+          imageSrcs={data.imagesRef.map((imageRef) => imageRef.url)}
+        />
         <p>
           <span>Lokasjon: </span> {data.place}
         </p>

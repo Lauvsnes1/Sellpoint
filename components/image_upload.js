@@ -2,40 +2,27 @@ import Button from "@material-ui/core/Button";
 import uniqid from "uniqid";
 import fire from "../config/fire-config";
 
-const ImageUpload = ({ setImageFiles, setImageSrcs, text }) => {
+const ImageUpload = ({ setImages, text }) => {
   const handleImageUpload = (e) => {
-    const newFiles = Array.from(e.target.files);
-    const newSrcs = [];
-
-    newFiles.forEach((file) => {
-      const reader = new FileReader();
-
-      reader.onload = (e) => {
-        newSrcs.push(e.target.result);
-
-        //Update state when all files have been read
-        //BUG: tror det kan komme i feil rekkefølge nå
-        if (newSrcs.length === newFiles.length) {
-          setImageSrcs((oldSrcs) => [...oldSrcs, ...newSrcs]);
-        }
-      };
-      reader.readAsDataURL(file);
+    const newImages = Array.from(e.target.files).map((file) => {
+      return { file: file, src: null };
     });
 
-    setImageFiles((oldFiles) => [...oldFiles, ...newFiles]);
-
-    /*
-    const [file] = e.target.files;
-
-    if (file) {
+    let counter = 0;
+    newImages.forEach((image, index) => {
       const reader = new FileReader();
 
       reader.onload = (e) => {
-        setImageSrc(e.target.result);
+        newImages[index].src = e.target.result;
+        counter++;
+
+        //Update state when all files have been read
+        if (counter === newImages.length) {
+          setImages((oldImages) => [...oldImages, ...newImages]);
+        }
       };
-      reader.readAsDataURL(file);
-      setImageFile(file);
-    } */
+      reader.readAsDataURL(image.file);
+    });
   };
 
   return (
@@ -60,22 +47,23 @@ const ImageUpload = ({ setImageFiles, setImageSrcs, text }) => {
 };
 
 ImageUpload.firebaseUpload = async function (imageFiles) {
-  let imagesInfo = [];
+  const imagesRef = [];
 
-  imageFiles.forEach(async (imageFile) => {
-    const imageRef = uniqid();
-    const imageUrl = await fire
+  for (const file of imageFiles) {
+    const ref = uniqid();
+    const url = await fire
       .storage()
-      .ref("/images/" + imageRef)
-      .put(imageFile)
+      .ref("/images/" + ref)
+      .put(file)
       .then((res) => {
         return res.ref.getDownloadURL();
       });
-
-    imagesInfo.push([imageRef, imageUrl]);
-  });
-
-  return imagesInfo;
+    imagesRef.push({
+      ref: ref,
+      url: url,
+    });
+  }
+  return imagesRef;
 };
 
 export default ImageUpload;
