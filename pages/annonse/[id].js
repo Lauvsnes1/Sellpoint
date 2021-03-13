@@ -85,7 +85,7 @@ export default function Annonse({ data, userData, docid }) {
           <EditButton isOwner={owner} docid={docid} />
         </div>
         <ImageContainer
-          imageSrcs={data.imagesRef.map((imageRef) => imageRef.url)}
+          imageSrcs={data.imageRefs.map((imageRef) => imageRef.url)}
         />
         <p>
           <span>Lokasjon: </span> {data.place}

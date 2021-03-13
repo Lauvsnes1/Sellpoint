@@ -12,6 +12,9 @@ const PostForm = ({
   initial_description,
   initial_images,
   handleSubmit,
+  submit_text,
+  onImageDeleted,
+  delete_button,
 }) => {
   //Place er bare en streng nå, må sette opp google
   //maps ting etterhvert
@@ -42,6 +45,14 @@ const PostForm = ({
       return false;
     }
     return true;
+  };
+
+  const deleteImage = (index) => {
+    const image = images[index];
+    setImages((oldImages) => oldImages.filter((src, i) => i != index));
+    if (onImageDeleted) {
+      onImageDeleted(image);
+    }
   };
 
   return (
@@ -75,10 +86,8 @@ const PostForm = ({
       `}</style>
       {notification}
       <ImageContainer
-        imageSrcs={images.map((image) => image.src)}
-        deleteImage={(index) =>
-          setImages((oldImages) => oldImages.filter((src, i) => i != index))
-        }
+        imageSrcs={images.map((image) => (image.src ? image.src : image.url))}
+        deleteImage={deleteImage}
       />
       <ImageUpload
         setImages={(images) => setImages(images)}
@@ -157,8 +166,9 @@ const PostForm = ({
             variant="contained"
             type="submit"
           >
-            Opprett annonse
+            {submit_text}
           </Button>
+          {delete_button}
         </div>
       </form>
     </div>

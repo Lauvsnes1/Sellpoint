@@ -1,6 +1,4 @@
 import Button from "@material-ui/core/Button";
-import uniqid from "uniqid";
-import fire from "../config/fire-config";
 
 const ImageUpload = ({ setImages, text }) => {
   const handleImageUpload = (e) => {
@@ -44,26 +42,6 @@ const ImageUpload = ({ setImages, text }) => {
       </Button>
     </div>
   );
-};
-
-ImageUpload.firebaseUpload = async function (imageFiles) {
-  const imagesRef = [];
-
-  for (const file of imageFiles) {
-    const ref = uniqid();
-    const url = await fire
-      .storage()
-      .ref("/images/" + ref)
-      .put(file)
-      .then((res) => {
-        return res.ref.getDownloadURL();
-      });
-    imagesRef.push({
-      ref: ref,
-      url: url,
-    });
-  }
-  return imagesRef;
 };
 
 export default ImageUpload;

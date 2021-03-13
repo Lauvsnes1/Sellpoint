@@ -4,6 +4,7 @@ import AppBar from "../components/header";
 import { useRouter } from "next/router";
 import ImageUpload from "../components/image_upload";
 import PostForm from "../components/post_form";
+import FirebaseStorage from "../components/firebase_storage";
 
 const CreatePost = () => {
   const [user, setUser] = useState(null);
@@ -32,21 +33,19 @@ const CreatePost = () => {
   ) => {
     setLoading(true);
 
-    const imagesRef = await ImageUpload.firebaseUpload(
+    const imageRefs = await FirebaseStorage.uploadImages(
       images.map((image) => image.file)
-    ).then((res) => {
-      return res;
-    });
+    );
 
     // Create post
     var document = await fire.firestore().collection("posts").add({
       title: title,
-      place: location,
+      location: location,
       price: price,
       miniDescription: miniDescription,
       description: description,
       userID: user.uid,
-      imagesRef: imagesRef,
+      imageRefs: imageRefs,
     });
 
     router.push("/annonse/" + document.id);
@@ -67,6 +66,7 @@ const CreatePost = () => {
         initial_description=""
         initial_images={[]}
         handleSubmit={handleSubmit}
+        submit_text="Opprett annonse"
       />
     </div>
   );
