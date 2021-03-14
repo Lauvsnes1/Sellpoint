@@ -95,20 +95,16 @@ export default function Annonse({ data, id }) {
       }
     }
 
-    await fire
-      .firestore()
-      .collection("posts")
-      .doc(id)
-      .update({
-        title: title,
-        place: location,
-        price: price,
-        description: description,
-        miniDescription: miniDescription,
-        imageRefs: imageRefs,
-      })
-      .then(router.push(`/annonse/${id}`))
-      .catch((error) => console.log(error.code));
+    await fire.firestore().collection("posts").doc(id).update({
+      title: title,
+      place: location,
+      price: price,
+      description: description,
+      miniDescription: miniDescription,
+      imageRefs: imageRefs,
+    });
+
+    router.push(`/annonse/${id}`);
   };
 
   return (

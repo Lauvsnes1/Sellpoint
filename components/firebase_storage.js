@@ -24,20 +24,6 @@ FirebaseStorage.uploadImages = async (imageFiles) => {
   for (const file of imageFiles) {
     const ref = await FirebaseStorage.uploadImage(file);
     imageRefs.push(ref);
-    /*
-    const ref = uniqid();
-    const url = await fire
-      .storage()
-      .ref("/images/" + ref)
-      .put(file)
-      .then((res) => {
-        return res.ref.getDownloadURL();
-      });
-    imagesRef.push({
-      ref: ref,
-      url: url,
-    });
-    */
   }
   return imageRefs;
 };
