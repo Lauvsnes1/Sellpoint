@@ -1,6 +1,7 @@
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
 import AppBar from "../components/header";
+import AddTable from "../components/reklame";
 import Card from "../components/cards";
 import PostCards from "../components/cards_alt";
 import fire from "../config/fire-config";
@@ -24,6 +25,7 @@ export default function Home() {
   return (
     <div className={styles.container}>
       <AppBar />
+      <AddTable />
       <div className={styles.rad}>
         <div className={styles.annonseContainer}>
           <AdminHeadLine admin={admin} />
