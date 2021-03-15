@@ -20,18 +20,19 @@ const useStyles = makeStyles((theme) => ({
 
     reklameContainer: {
         width: 1200,
+        height: 500,
         display: "flex",
         alignSelf: "center",
         paddingLeft: 0,
         flexDirection: "column",
-        position: "fixed"
+        position: "fixed",
+        paddingBottom: 50
     },
 
     reklameContainerLeft: {
         alignSelf: "flex-start",
         position: "fixed",
-        bottom: 0,
-        top: 0,
+        top: 50,
         width: 200,
         flex: 1,
         flexDirection: "row",
@@ -42,8 +43,7 @@ const useStyles = makeStyles((theme) => ({
     reklameContainerRight: {
         alignSelf: "flex-end",
         position: "fixed",
-        bottom: 0,
-        top: 0,
+        top: 50,
         width: 200,
         flex: 1,
         flexDirection: "row",
@@ -80,14 +80,14 @@ const AdCards = () => {
             <div className= {classes.reklameContainerLeft}>
                 {ads.map((ad) => 
                     <a href={ad.link}>
-                        <Image src={ad.imageUrl} height={113} width={200}/>
+                        <Image src={ad.imageUrl} height={450} width={200}/>
                     </a>
                 )}
             </div>
             <div className= {classes.reklameContainerRight}>
                 {ads.map((ad) => 
                     <a href={ad.link}>
-                        <Image src={ad.imageUrl} height={113} width={200}/>
+                        <Image src={ad.imageUrl} height={450} width={200}/>
                     </a>
                 )}
             </div>
