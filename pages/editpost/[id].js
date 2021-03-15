@@ -1,10 +1,10 @@
 import fire from "../../config/fire-config";
-import Image from "next/image";
 import AppBar from "../../components/header";
 import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
-import TextField from "@material-ui/core/TextField";
+import { useEffect, useRef } from "react";
 import Button from "@material-ui/core/Button";
+import PostForm from "../../components/post_form";
+import FirebaseStorage from "../../components/firebase_storage";
 
 export async function getServerSideProps({ res, params }) {
   const documentData = await fire
@@ -31,18 +31,19 @@ export async function getServerSideProps({ res, params }) {
 }
 
 export default function Annonse({ data, id }) {
-  const [title, setTitle] = useState(data.title);
-  const [location, setLocation] = useState(data.place);
-  const [price, setPrice] = useState(data.price);
-  const [description, setDescription] = useState(data.description);
-  const [miniDesc, setMiniDesc] = useState(data.miniDescription);
-  const [imgFile, setImageFile] = useState("");
-  const [imageSrc, setImageSrc] = useState(data.imageUrl);
-  const [imageChanged, setImageChanged] = useState(false);
+  console.log(data);
+  //keep track of deleted images so they can be deleted from firebase storage
+  const deletedImageRefs = useRef([]);
 
   const router = useRouter();
 
-  let storageRef = "";
+  const storageRefs = useRef([]);
+
+  const fetchStorageRefs = async () => {
+    storageRefs.current = await FirebaseStorage.getStorageRefs(
+      data.imageRefs.map((image) => image.ref)
+    );
+  };
 
   useEffect(() => {
     fire.auth().onAuthStateChanged((user) => {
@@ -50,191 +51,91 @@ export default function Annonse({ data, id }) {
         router.push("/");
       }
     });
-    storageRef = fire
-      .storage()
-      .ref()
-      .child("/images/" + data.imageRef);
+
+    fetchStorageRefs();
   });
 
-  const handleUpdate = async () => {
-    const downlaoadURl = imageChanged? await storageRef
-      .put(imgFile)
-      .then((res) => {
-        return res.ref.getDownloadURL();
-      })
-      .catch((err) => console.log(err.code))
-      :
-      data.imageUrl;
-    await fire
-      .firestore()
-      .collection("posts")
-      .doc(id)
-      .update({
-        title: title,
-        place: location,
-        price: price,
-        description: description,
-        miniDescription: miniDesc,
-        imageUrl: downlaoadURl,
-      })
-      .then(router.push(`/annonse/${id}`))
-      .catch((error) => console.log(error.code));
-  };
-
-  const handleChangeImage = (e) => {
-    const [file] = e.target.files;
-
-    if (file) {
-      const reader = new FileReader();
-
-      reader.onload = (e) => {
-        setImageSrc(e.target.result);
-      };
-      reader.readAsDataURL(file);
-      setImageFile(file);
-      setImageChanged(true);
+  const onImageDeleted = (image) => {
+    if (image.ref) {
+      deletedImageRefs.current.push(image.ref);
     }
   };
 
   const handleDelete = async () => {
     const ref = fire.firestore().collection("posts").doc(id);
-    await storageRef.delete().catch((err) => console.log(err.code));
+    await FirebaseStorage.deleteImages(storageRefs.current);
     await ref
       .delete()
       .then(router.push("/"))
       .catch((error) => console.log(error.code));
   };
+
+  const handleUpdate = async (
+    images,
+    title,
+    location,
+    price,
+    miniDescription,
+    description
+  ) => {
+    //delete removed images
+    const deletedImageStorageRefs = await FirebaseStorage.getStorageRefs(
+      deletedImageRefs.current
+    );
+    await FirebaseStorage.deleteImages(deletedImageStorageRefs);
+
+    const imageRefs = [];
+    for (const image of images) {
+      if (image.file) {
+        // upload newly added images
+        const imageRef = await FirebaseStorage.uploadImage(image.file);
+        imageRefs.push(imageRef);
+      } else {
+        // old images are not uploaded again
+        imageRefs.push(image);
+      }
+    }
+
+    await fire.firestore().collection("posts").doc(id).update({
+      title: title,
+      place: location,
+      price: price,
+      description: description,
+      miniDescription: miniDescription,
+      imageRefs: imageRefs,
+    });
+
+    router.push(`/annonse/${id}`);
+  };
+
   return (
     <div>
-      <style jsx>{`
-        .container {
-          width: 80%;
-          max-width: 700px;
-          margin: auto;
-          margin-top: 5rem;
-        }
-        h1 {
-          font-family: "helvetica neue";
-          font-size: 48pt;
-          font-weight: normal;
-        }
-        span {
-          color: #90cc00;
-          font-weight: bold;
-        }
-        a {
-          text-decoration: underline;
-        }
-        .buttons {
-          display: flex;
-          flex-direction: column;
-        }
-        .textfield {
-          margin: 20px 0;
-        }
-      `}</style>
       <AppBar />
-      <div className="container">
-        <div style={{ position: "relative", width: "700px", height: "500px" }}>
-          <Image src={imageSrc} layout="fill" objectFit="contain" />
+      <PostForm
+        initialTitle={data.title}
+        initialLocation={data.place}
+        initialPrice={data.price}
+        initialMiniDescription={data.miniDescription}
+        initialDescription={data.description}
+        initialImages={data.imageRefs}
+        handleSubmit={handleUpdate}
+        submitText="Oppdater annonse"
+        onImageDeleted={onImageDeleted}
+        deleteButton={
           <Button
             style={{
               width: "200px",
-              position: "absolute",
-              top: "226px",
-              left: "244px",
+              marginTop: "10px",
+              color: "#FF1744",
+              borderColor: "#FF1744",
             }}
-            variant="contained"
-            color="secondary"
-            component="label"
+            variant="outlined"
+            onClick={handleDelete}
           >
-            Endre bilde
-            <input
-              type="file"
-              accept="image/*"
-              multiple={false}
-              onChange={handleChangeImage}
-              hidden
-            />
+            Slett annonse
           </Button>
-        </div>
-        <form onSubmit={handleUpdate}>
-          <div className="textfield">
-            <TextField
-              value={title}
-              onChange={({ target }) => setTitle(target.value)}
-              id="outlined-title"
-              label="Tittel"
-              variant="outlined"
-              fullWidth
-            />
-          </div>
-          <div className="textfield">
-            <TextField
-              value={location}
-              onChange={({ target }) => setLocation(target.value)}
-              id="outlined-location"
-              label="Lokasjon"
-              variant="outlined"
-            />
-          </div>
-          <div className="textfield">
-            <TextField
-              value={price}
-              onChange={({ target }) => setPrice(target.value)}
-              id="outlined-price"
-              label="Pris"
-              variant="outlined"
-            />
-          </div>
-          <div className="textfield">
-            <TextField
-              value={description}
-              onChange={({ target }) => setDescription(target.value)}
-              id="outlined-description"
-              label="Beskrivelse"
-              variant="outlined"
-              multiline
-              fullWidth
-            />
-          </div>
-          <div className="textfield">
-            <TextField
-              value={miniDesc}
-              onChange={({ target }) => setMiniDesc(target.value)}
-              id="outlined-ingress"
-              label="Ingress"
-              variant="outlined"
-              multiline
-              fullWidth
-            />
-          </div>
-          <div className="buttons">
-            <Button
-              style={{ width: "200px" }}
-              color="secondary"
-              variant="contained"
-              //type="submit"
-              onClick={handleUpdate}
-            >
-              Oppdater annonse
-            </Button>
-
-            <Button
-              style={{
-                width: "200px",
-                marginTop: "10px",
-                color: "#FF1744",
-                borderColor: "#FF1744",
-              }}
-              variant="outlined"
-              onClick={handleDelete}
-            >
-              Slett annonse
-            </Button>
-          </div>
-        </form>
-      </div>
+        }
+      />
     </div>
   );
 }
