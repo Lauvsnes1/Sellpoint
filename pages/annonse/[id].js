@@ -1,9 +1,9 @@
 import fire from "../../config/fire-config";
-import Image from "next/image";
 import AppBar from "../../components/header";
 import { useState } from "react";
 import { Button } from "@material-ui/core";
 import Link from "next/link";
+import ImageContainer from "../../components/image_container";
 import { useRouter } from "next/router";
 
 export async function getServerSideProps({ res, params }) {
@@ -112,9 +112,9 @@ export default function Annonse({ data, userData, docid }) {
           <EditButton isOwner={owner} docid={docid} />
           <DeleteButton isAdmin={admin} handleDelete={handleDelete} />
         </div>
-        <div style={{ position: "relative", width: "700px", height: "500px" }}>
-          <Image src={data.imageUrl} layout="fill" objectFit="contain" />
-        </div>
+        <ImageContainer
+          imageSrcs={data.imageRefs.map((imageRef) => imageRef.url)}
+        />
         <p>
           <span>Lokasjon: </span> {data.place}
         </p>
