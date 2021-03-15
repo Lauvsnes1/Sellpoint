@@ -28,20 +28,14 @@ const PostForm = ({
 
   const [notification, setNotification] = useState("");
 
-  var [images, setImages] = useState(initialImages);
+  const [images, setImages] = useState(initialImages);
 
   const validate = () => {
-    if (
-      title.length === 0 ||
-      location.length === 0 ||
-      miniDescription === 0 ||
-      description === 0 ||
-      images.length === 0
-    ) {
-      setNotification("Du må fylle inn alle felt!");
+    if (images.length === 0) {
+      setNotification("Du må ha minst ett bilde!");
       setTimeout(() => {
         setNotification("");
-      }, 2000);
+      }, 5000);
       return false;
     }
     return true;
@@ -110,6 +104,7 @@ const PostForm = ({
       >
         <div className="textfield">
           <TextField
+            required
             value={title}
             onChange={({ target }) => setTitle(target.value)}
             id="outlined-title"
@@ -119,8 +114,8 @@ const PostForm = ({
           />
         </div>
         <div className="textfield">
-          {/*Man skal kun skrive tall inn for pris, nå kan man skrive hva som helst*/}
           <TextField
+            required
             value={location}
             onChange={({ target }) => setLocation(target.value)}
             id="outlined-location"
@@ -130,6 +125,7 @@ const PostForm = ({
         </div>
         <div className="textfield">
           <TextField
+            required
             value={price}
             onChange={({ target }) => setPrice(target.value)}
             id="outlined-price"
@@ -140,6 +136,7 @@ const PostForm = ({
         </div>
         <div className="textfield">
           <TextField
+            required
             value={description}
             onChange={({ target }) => setDescription(target.value)}
             id="outlined-description"
@@ -151,6 +148,7 @@ const PostForm = ({
         </div>
         <div className="textfield">
           <TextField
+            required
             value={miniDescription}
             onChange={({ target }) => setMiniDescription(target.value)}
             id="outlined-ingress"

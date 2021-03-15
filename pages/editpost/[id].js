@@ -31,6 +31,7 @@ export async function getServerSideProps({ res, params }) {
 }
 
 export default function Annonse({ data, id }) {
+  console.log(data);
   //keep track of deleted images so they can be deleted from firebase storage
   const deletedImageRefs = useRef([]);
 
@@ -112,7 +113,7 @@ export default function Annonse({ data, id }) {
       <AppBar />
       <PostForm
         initialTitle={data.title}
-        initialLocation={data.location}
+        initialLocation={data.place}
         initialPrice={data.price}
         initialMiniDescription={data.miniDescription}
         initialDescription={data.description}
