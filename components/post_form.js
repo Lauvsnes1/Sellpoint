@@ -1,7 +1,7 @@
 import { useState } from "react";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import ImageUpload from "../components/image_upload";
+import MultiImageUpload from "./multi_image_upload";
 import ImageContainer from "../components/image_container";
 
 const PostForm = ({
@@ -83,7 +83,7 @@ const PostForm = ({
         imageSrcs={images.map((image) => (image.src ? image.src : image.url))}
         deleteImage={deleteImage}
       />
-      <ImageUpload
+      <MultiImageUpload
         setImages={(images) => setImages(images)}
         text="Last opp bilde av varen"
       />
