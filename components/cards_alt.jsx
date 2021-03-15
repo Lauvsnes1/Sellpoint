@@ -77,15 +77,15 @@ function usePosts(){
   }, [])
   return posts
 }
-function usePostsPrice(){
+function usePostsPrice(minValue, maxValue){
 
   const [posts, setPost] = useState([])
   useEffect(() => {
     firebase
     .firestore()
     .collection('posts')
-    //.where('price','<', maxValue)
-    //.where('price','>',minValue)
+    .where('price','<', maxValue)
+    .where('price','>', minValue)
     .onSnapshot((snapShot) => {
       
       const newPosts = snapShot.docs.map((doc) =>({
@@ -103,21 +103,16 @@ function usePostsPrice(){
  
 
  const PostCards = () => {
- var posts = usePosts();
- const postFilteredByPrice = usePostsPrice();
  const [sortByPrice, setSortByPrice] = useState(false);
- const [minValue, setMinValue] = useState();
- const [maxValue, setMaxValue] = useState();
-
- 
-
+ const [minValue, setMinValue] = useState(0);
+ const [maxValue, setMaxValue] = useState(30000000);
   const classes = useStyles();
   const [postId,setPostId] = useState('');
   
   function handlePriceRange(){
     setMinValue(minValue);
     setMaxValue(maxValue);
-    //setSortByPrice(true);
+    setSortByPrice(true);
     //post = postFilteredByPrice;
   }
     
@@ -138,12 +133,89 @@ function usePostsPrice(){
         color='secondary'>Søk</Button>
         </div>
         </div>
+        <SortByPrice sortByPrice={sortByPrice} maxValue={maxValue} minValue={minValue}/>
+        <div/>
 
+          </ThemeProvider>
 
-      <div className={styles.annonseContainer}>
-      {posts.map((post) => 
-          <Card className={classes.root}>  
-              <div>
+      );
+        };
+    
+        export default PostCards
+
+        function SortByPrice(props){
+          const posts = usePosts();
+          const classes = useStyles();
+          const sortByPrice = props.sortByPrice;
+          const postFilteredByPrice = usePostsPrice(props.minValue,props.maxValue)
+
+          if(sortByPrice){
+            return (
+              <div className={styles.annonseContainer}>
+              {postFilteredByPrice.map((post) => 
+                  <Card className={classes.root}>  
+                    <div>
+                <CardHeader 
+                classes={{
+                  subheader: classes.subheader
+                }}
+
+                avatar={
+                <Avatar aria-label="recipe" className={classes.avatar}>
+                {/*firebase.firestore().collection('users').doc(post.userID).get().firstName*/}  
+                </Avatar>
+                
+                } 
+            
+                title = {post.title}
+                subheader={post.place}
+                
+            />
+            <CardMedia
+                className={classes.media}
+                image= {post.imageUrl}
+            />
+
+            {/*<Image src="firebase.storage().ref('/images/' + post.imageRef).getDownloadURL()" //brukt til test
+            height='10px'
+              width='10px'/>*/}
+            
+            
+            <CardContent>
+                <Typography variant="body2" color="textSecondary" component="p" style={{height: "25px", lineHeight: "25px", overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis"}}>
+                {post.miniDescription}
+                </Typography>
+                <Typography style={{textAlign: "right"}}> 
+                  {post.price} kr
+
+                  
+                </Typography>
+            </CardContent>
+            <CardActions style={{height: "20px", }}>
+              <Button size="small" variant = 'outlined' color='secondary' marginRight = "30px" display="inline-block">
+                <Link href={'/annonse/'+post.id} passHref><a>Annonse</a></Link>
+              </Button>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <Button size="small" variant = 'outlined' color='secondary' marginLeft = "30px" display="inline-block">
+                Selger
+              </Button>
+            </CardActions>
+
+          </div>
+            
+          </Card>
+    )}
+          </div>
+            );
+          }
+          else{
+            return(
+              <div className={styles.annonseContainer}>
+                {posts.map((post) => 
+                    <Card className={classes.root}>  
+                      <div>
                   <CardHeader 
                   classes={{
                     subheader: classes.subheader
@@ -197,10 +269,7 @@ function usePostsPrice(){
             </Card>
       )}
             </div>
-          </ThemeProvider>
 
-      );
-        };
-        
-
-        export default PostCards
+            );
+          }
+        }
