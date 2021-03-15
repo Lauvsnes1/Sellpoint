@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {useState , useEffect} from 'react';
 import {withStyles, makeStyles} from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -7,6 +7,9 @@ import Tooltip from '@material-ui/core/Tooltip';
 import TextField from '@material-ui/core/TextField';
 import { TableRow } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
+import priceContextMax from './cards_alt';
+
+
 
 const useStyles = makeStyles((Theme) => ({
     textInputContainer:{
@@ -62,12 +65,9 @@ const PriceSlider = withStyles({
     const [minValue, setMinValue] = useState(0);
     const [maxValue, setMaxValue] = useState(100);
     //const [value, setValue] = useState([10000, 50000]);
+    const maxPrice = useContext(priceContextMax);
 
-    useEffect(() => {
-      console.log(minValue)
-      props.getValues(minValue,maxValue)
-      
-    }, [minValue,maxValue]);
+ 
     
     
 
@@ -81,7 +81,7 @@ const PriceSlider = withStyles({
     return (
       <div style={{paddingTop: 100}}>
         <Typography id="range-slider" gutterBottom style={{ justifyContent: 'center'}}>
-          Prisområde:
+          Prisområde: {maxPrice}
         </Typography>
         <div className={classes.textInputContainer} >
         <TextField id="outlined-basic" label="Min pris" variant="outlined" />

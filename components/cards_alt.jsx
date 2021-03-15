@@ -9,13 +9,16 @@ import Typography from '@material-ui/core/Typography';
 import theme from '../src/theme';
 import { db } from '../config/fire-config';
 import firebase from "../config/fire-config";
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import styles from '../styles/Home.module.css'
 import { colors, ThemeProvider} from '@material-ui/core';
 import Image from 'next/image';
 import Link from 'next/link';
 import PriceRangeSlider from "../components/filters";
+import TextField from '@material-ui/core/TextField';
+import { createContext } from 'react'
+import { useRouter } from 'next/router'
 
 
 const useStyles = makeStyles(() => ({
@@ -59,6 +62,8 @@ function usePosts(){
     firebase
     .firestore()
     .collection('posts')
+    //.where('price', '>', priceContextMin)
+    //.where('price', '<', priceContextMax)
     .onSnapshot((snapShot) => {
       
       const newPosts = snapShot.docs.map((doc) =>({
@@ -68,34 +73,76 @@ function usePosts(){
       }) )
       setPost(newPosts);
     } )
+  
   }, [])
+  return posts
+}
+function usePostsPrice(){
+
+  const [posts, setPost] = useState([])
+  useEffect(() => {
+    firebase
+    .firestore()
+    .collection('posts')
+    //.where('price','<', maxValue)
+    //.where('price','>',minValue)
+    .onSnapshot((snapShot) => {
+      
+      const newPosts = snapShot.docs.map((doc) =>({
+        id: doc.id,
+        ...doc.data()
+
+      }) )
+      setPost(newPosts);
+    } )
+  
+  },[])
   return posts
 }
 
  
 
  const PostCards = () => {
- const posts = usePosts();
- const [minValue, setMinValue] = useState(0);
- const [maxValue, setMaxValue] = useState(0);
+ var posts = usePosts();
+ const postFilteredByPrice = usePostsPrice();
+ const [sortByPrice, setSortByPrice] = useState(false);
+ const [minValue, setMinValue] = useState();
+ const [maxValue, setMaxValue] = useState();
+
+ 
 
   const classes = useStyles();
   const [postId,setPostId] = useState('');
   
-  function handleSlider(minValue, maxValue){
+  function handlePriceRange(){
     setMinValue(minValue);
     setMaxValue(maxValue);
+    //setSortByPrice(true);
+    //post = postFilteredByPrice;
   }
     
     return (
+
     <ThemeProvider theme ={theme}>
-      <PriceRangeSlider getValues={handleSlider}/>
+      {//<PriceRangeSlider getValues={handleSlider}/>
+ }
+      <div style={{paddingTop: 100}}>
+        <Typography id="range-slider" gutterBottom >
+          Prisområde: {minValue} - {maxValue} 
+        </Typography>
+        <div className={classes.textInputContainer} >
+        <TextField value={minValue} id="outlined-basic" label="Min pris" variant="outlined" key={'1'} onChange={(({target}) => setMinValue(target.value))} />
+        <TextField value={maxValue} id="outlined-basic" label="Max pris" variant="outlined" key={'2'} onChange={(({target}) => setMaxValue(target.value))} />
+        <Button variant="contained" 
+        onClick={handlePriceRange}
+        color='secondary'>Søk</Button>
+        </div>
+        </div>
+
+
       <div className={styles.annonseContainer}>
       {posts.map((post) => 
-
-          <Card className={classes.root}>
-            
-              
+          <Card className={classes.root}>  
               <div>
                   <CardHeader 
                   classes={{
@@ -152,7 +199,6 @@ function usePosts(){
             </div>
           </ThemeProvider>
 
-        //endelig formatering blir gjort når vi fikser koblingen til firebase 
       );
         };
         
