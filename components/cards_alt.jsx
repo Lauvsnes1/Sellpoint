@@ -7,18 +7,14 @@ import Button from '@material-ui/core/Button';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 import theme from '../src/theme';
-import { db } from '../config/fire-config';
 import firebase from "../config/fire-config";
 import React, { useContext, useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import styles from '../styles/Home.module.css'
 import { colors, ThemeProvider} from '@material-ui/core';
-import Image from 'next/image';
 import Link from 'next/link';
-import PriceRangeSlider from "../components/filters";
 import TextField from '@material-ui/core/TextField';
-import { createContext } from 'react'
-import { useRouter } from 'next/router'
+
 
 
 const useStyles = makeStyles(() => ({
@@ -54,8 +50,6 @@ const useStyles = makeStyles(() => ({
     },
   }));
 
-
-
 function usePosts(){
   const [posts, setPost] = useState([])
   useEffect(() => {
@@ -77,43 +71,21 @@ function usePosts(){
   }, [])
   return posts
 }
-function usePostsPrice(minValue, maxValue){
 
-  const [posts, setPost] = useState([])
-  useEffect(() => {
-    firebase
-    .firestore()
-    .collection('posts')
-    .where('price','<', maxValue)
-    .where('price','>', minValue)
-    .onSnapshot((snapShot) => {
-      
-      const newPosts = snapShot.docs.map((doc) =>({
-        id: doc.id,
-        ...doc.data()
-
-      }) )
-      setPost(newPosts);
-    } )
-  
-  },[])
-  return posts
-}
-
- 
 
  const PostCards = () => {
- const [sortByPrice, setSortByPrice] = useState(false);
  const [minValue, setMinValue] = useState(0);
- const [maxValue, setMaxValue] = useState(30000000);
-  const classes = useStyles();
-  const [postId,setPostId] = useState('');
-  
+ const [maxValue, setMaxValue] = useState(0);
+ const [searchCounter, setSearchCounter] = useState(0);
+ const classes = useStyles();
+ const [postId,setPostId] = useState('');
+ const [searched, setSearched] = useState(false);
+
   function handlePriceRange(){
-    setMinValue(minValue);
-    setMaxValue(maxValue);
-    setSortByPrice(true);
-    //post = postFilteredByPrice;
+    setSearchCounter(searchCounter+1);
+    setSearched(true); //Varsler for å sortere kortene
+    setMaxValue(parseInt(maxValue,10)); //OBSOBS parseINT måtte til for å få riktig format på input
+    setMinValue(parseInt(minValue,10));
   }
     
     return (
@@ -126,14 +98,14 @@ function usePostsPrice(minValue, maxValue){
           Prisområde: {minValue} - {maxValue} 
         </Typography>
         <div className={classes.textInputContainer} >
-        <TextField value={minValue} id="outlined-basic" label="Min pris" variant="outlined" key={'1'} onChange={(({target}) => setMinValue(target.value))} />
-        <TextField value={maxValue} id="outlined-basic" label="Max pris" variant="outlined" key={'2'} onChange={(({target}) => setMaxValue(target.value))} />
+        <TextField value={minValue} id="outlined-basic" label="Min pris" variant="outlined" key={'1'} type='number' onChange={({target}) => setMinValue(target.value)} />
+        <TextField value={maxValue} id="outlined-basic" label="Max pris" variant="outlined" key={'2'} type='number' onChange={({target}) => setMaxValue(target.value)} />
         <Button variant="contained" 
         onClick={handlePriceRange}
         color='secondary'>Søk</Button>
         </div>
         </div>
-        <SortByPrice sortByPrice={sortByPrice} maxValue={maxValue} minValue={minValue}/>
+        <SortByPrice searched={searched} maxValue={maxValue} minValue={minValue} searchCounter={searchCounter}/>
         <div/>
 
           </ThemeProvider>
@@ -144,15 +116,38 @@ function usePostsPrice(minValue, maxValue){
         export default PostCards
 
         function SortByPrice(props){
-          const posts = usePosts();
           const classes = useStyles();
-          const sortByPrice = props.sortByPrice;
-          const postFilteredByPrice = usePostsPrice(props.minValue,props.maxValue)
+          const minValue = props.minValue;
+          const maxValue = props.maxValue;
+          const searchCounter = props.searchCounter;
+          const searched = props.searched;
+          const allPosts = usePosts();
 
-          if(sortByPrice){
+          const [posts, setPost] = useState([])
+          useEffect(() => {
+            console.log('minValue:', minValue,'maxValue:', maxValue);
+            firebase
+            .firestore()
+            .collection('posts')
+            .where('price','<=', maxValue)
+            .where('price','>=', minValue)
+            .orderBy('price','asc')
+            .onSnapshot((snapShot) => {
+              
+              const newPosts = snapShot.docs.map((doc) =>({
+                id: doc.id,
+                ...doc.data()
+        
+              }) )
+              setPost(newPosts);
+            } )
+          
+          },[searchCounter])
+
+          if(searched){ //dersom 'søk' knappen er trykket
             return (
               <div className={styles.annonseContainer}>
-              {postFilteredByPrice.map((post) => 
+              {posts.map((post) => 
                   <Card className={classes.root}>  
                     <div>
                 <CardHeader 
@@ -164,7 +159,6 @@ function usePostsPrice(minValue, maxValue){
                 <Avatar aria-label="recipe" className={classes.avatar}>
                 {/*firebase.firestore().collection('users').doc(post.userID).get().firstName*/}  
                 </Avatar>
-                
                 } 
             
                 title = {post.title}
@@ -175,12 +169,6 @@ function usePostsPrice(minValue, maxValue){
                 className={classes.media}
                 image= {post.imageUrl}
             />
-
-            {/*<Image src="firebase.storage().ref('/images/' + post.imageRef).getDownloadURL()" //brukt til test
-            height='10px'
-              width='10px'/>*/}
-            
-            
             <CardContent>
                 <Typography variant="body2" color="textSecondary" component="p" style={{height: "25px", lineHeight: "25px", overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis"}}>
                 {post.miniDescription}
@@ -209,18 +197,18 @@ function usePostsPrice(minValue, maxValue){
     )}
           </div>
             );
-          }
-          else{
-            return(
-              <div className={styles.annonseContainer}>
-                {posts.map((post) => 
+            }
+            else{ //dersom søk-knappen ikke er trykka
+              return (
+                <div className={styles.annonseContainer}>
+                {allPosts.map((post) => 
                     <Card className={classes.root}>  
                       <div>
                   <CardHeader 
                   classes={{
                     subheader: classes.subheader
                   }}
-
+  
                   avatar={
                   <Avatar aria-label="recipe" className={classes.avatar}>
                   {/*firebase.firestore().collection('users').doc(post.userID).get().firstName*/}  
@@ -236,11 +224,6 @@ function usePostsPrice(minValue, maxValue){
                   className={classes.media}
                   image= {post.imageUrl}
               />
-
-              {/*<Image src="firebase.storage().ref('/images/' + post.imageRef).getDownloadURL()" //brukt til test
-              height='10px'
-                width='10px'/>*/}
-              
               
               <CardContent>
                   <Typography variant="body2" color="textSecondary" component="p" style={{height: "25px", lineHeight: "25px", overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis"}}>
@@ -248,7 +231,7 @@ function usePostsPrice(minValue, maxValue){
                   </Typography>
                   <Typography style={{textAlign: "right"}}> 
                     {post.price} kr
-
+  
                     
                   </Typography>
               </CardContent>
@@ -263,13 +246,15 @@ function usePostsPrice(minValue, maxValue){
                   Selger
                 </Button>
               </CardActions>
-
+  
             </div>
               
             </Card>
       )}
             </div>
+              );
 
-            );
+            }
+         
           }
-        }
+        
