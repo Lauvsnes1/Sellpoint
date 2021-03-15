@@ -5,30 +5,30 @@ import ImageUpload from "../components/image_upload";
 import ImageContainer from "../components/image_container";
 
 const PostForm = ({
-  initial_title,
-  initial_location,
-  initial_price,
-  initial_miniDescription,
-  initial_description,
-  initial_images,
+  initialTitle,
+  initialLocation,
+  initialPrice,
+  initialMiniDescription,
+  initialDescription,
+  initialImages,
   handleSubmit,
-  submit_text,
+  submitText,
   onImageDeleted,
-  delete_button,
+  deleteButton,
 }) => {
   //Place er bare en streng nå, må sette opp google
   //maps ting etterhvert
-  const [title, setTitle] = useState(initial_title);
-  const [location, setLocation] = useState(initial_location);
-  const [price, setPrice] = useState(initial_price);
+  const [title, setTitle] = useState(initialTitle);
+  const [location, setLocation] = useState(initialLocation);
+  const [price, setPrice] = useState(initialPrice);
   const [miniDescription, setMiniDescription] = useState(
-    initial_miniDescription
+    initialMiniDescription
   );
-  const [description, setDescription] = useState(initial_description);
+  const [description, setDescription] = useState(initialDescription);
 
   const [notification, setNotification] = useState("");
 
-  var [images, setImages] = useState(initial_images);
+  var [images, setImages] = useState(initialImages);
 
   const validate = () => {
     if (
@@ -134,6 +134,7 @@ const PostForm = ({
             onChange={({ target }) => setPrice(target.value)}
             id="outlined-price"
             label="Pris"
+            type="number"
             variant="outlined"
           />
         </div>
@@ -166,9 +167,9 @@ const PostForm = ({
             variant="contained"
             type="submit"
           >
-            {submit_text}
+            {submitText}
           </Button>
-          {delete_button}
+          {deleteButton}
         </div>
       </form>
     </div>

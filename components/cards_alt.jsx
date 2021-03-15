@@ -88,7 +88,7 @@ const PostCards = () => {
               />
               <CardMedia
                 className={classes.media}
-                image={post.imageRefs[0].url}
+                image={post.imageRefs && post.imageRefs[0].url}
               />
 
               {/*<Image src="firebase.storage().ref('/images/' + post.imageRef).getDownloadURL()" //brukt til test

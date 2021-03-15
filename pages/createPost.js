@@ -59,14 +59,14 @@ const CreatePost = () => {
     <div>
       <AppBar />
       <PostForm
-        initial_title=""
-        initial_location=""
-        initial_price={0}
-        initial_miniDescription=""
-        initial_description=""
-        initial_images={[]}
+        initialTitle=""
+        initialLocation=""
+        initialPrice={0}
+        initialMiniDescription=""
+        initialDescription=""
+        initialImages={[]}
         handleSubmit={handleSubmit}
-        submit_text="Opprett annonse"
+        submitText="Opprett annonse"
       />
     </div>
   );

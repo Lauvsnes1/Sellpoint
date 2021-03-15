@@ -111,16 +111,16 @@ export default function Annonse({ data, id }) {
     <div>
       <AppBar />
       <PostForm
-        initial_title={data.title}
-        initial_location={data.location}
-        initial_price={data.price}
-        initial_miniDescription={data.miniDescription}
-        initial_description={data.description}
-        initial_images={data.imageRefs}
+        initialTitle={data.title}
+        initialLocation={data.location}
+        initialPrice={data.price}
+        initialMiniDescription={data.miniDescription}
+        initialDescription={data.description}
+        initialImages={data.imageRefs}
         handleSubmit={handleUpdate}
-        submit_text="Oppdater annonse"
+        submitText="Oppdater annonse"
         onImageDeleted={onImageDeleted}
-        delete_button={
+        deleteButton={
           <Button
             style={{
               width: "200px",
