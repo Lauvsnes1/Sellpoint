@@ -18,6 +18,15 @@ import { useRouter } from 'next/router'
 
 const useStyles = makeStyles((theme) => ({
 
+    reklameContainer: {
+        width: 1200,
+        display: "flex",
+        alignSelf: "center",
+        paddingLeft: 0,
+        flexDirection: "column",
+        position: "fixed"
+    },
+
     reklameContainerLeft: {
         alignSelf: "flex-start",
         position: "fixed",
@@ -30,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
         paddingLeft: 0,
         paddingTop:71
     },
-    reklameContainerRigth: {
+    reklameContainerRight: {
         alignSelf: "flex-end",
         position: "fixed",
         bottom: 0,
@@ -67,12 +76,21 @@ const AdCards = () => {
     const classes = useStyles();
 
     return(
-        <div className= {classes.reklameContainerLeft}>
-            {ads.map((ad) => 
-                <a href={ad.link}>
-                    <Image src={ad.imageUrl} height={113} width={200}/>
-                </a>
-            )}
+        <div className= {classes.reklameContainer}>
+            <div className= {classes.reklameContainerLeft}>
+                {ads.map((ad) => 
+                    <a href={ad.link}>
+                        <Image src={ad.imageUrl} height={113} width={200}/>
+                    </a>
+                )}
+            </div>
+            <div className= {classes.reklameContainerRight}>
+                {ads.map((ad) => 
+                    <a href={ad.link}>
+                        <Image src={ad.imageUrl} height={113} width={200}/>
+                    </a>
+                )}
+            </div>
         </div>
         
     );
