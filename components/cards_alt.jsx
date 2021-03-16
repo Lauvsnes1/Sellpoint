@@ -38,7 +38,7 @@ const useStyles = makeStyles(() => ({
     },
 
     button: {
-      paddingLeft: '100px',
+      paddingleft: '100px',
       outlineOffset: '100px',
     },
 
@@ -78,7 +78,7 @@ function usePosts(){
  const [maxValue, setMaxValue] = useState(0);
  const [searchCounter, setSearchCounter] = useState(0);
  const classes = useStyles();
- const [postId,setPostId] = useState('');
+ const [postId,setPostId] = useState(0);
  const [searched, setSearched] = useState(false);
 
   function handlePriceRange(){
@@ -105,7 +105,7 @@ function usePosts(){
         color='secondary'>Søk</Button>
         </div>
         </div>
-        <SortByPrice searched={searched} maxValue={maxValue} minValue={minValue} searchCounter={searchCounter}/>
+        <SortByPrice searched={searched} maxValue={maxValue} minValue={minValue} searchCounter={searchCounter} />
         <div/>
 
           </ThemeProvider>
@@ -148,7 +148,7 @@ function usePosts(){
             return (
               <div className={styles.annonseContainer}>
               {posts.map((post) => 
-                  <Card className={classes.root}>  
+                  <Card className={classes.root} key={post.id}>  
                     <div>
                 <CardHeader 
                 classes={{
@@ -166,8 +166,10 @@ function usePosts(){
                 
             />
             <CardMedia
-                className={classes.media}
+                component='img'
                 image= {post.imageUrl}
+                className={classes.media}
+                
             />
             <CardContent>
                 <Typography variant="body2" color="textSecondary" component="p" style={{height: "25px", lineHeight: "25px", overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis"}}>
@@ -180,13 +182,13 @@ function usePosts(){
                 </Typography>
             </CardContent>
             <CardActions style={{height: "20px", }}>
-              <Button size="small" variant = 'outlined' color='secondary' marginRight = "30px" display="inline-block">
+              <Button size="small" variant = 'outlined' color='secondary' marginright = "30px" display="inline-block">
                 <Link href={'/annonse/'+post.id} passHref><a>Annonse</a></Link>
               </Button>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <Button size="small" variant = 'outlined' color='secondary' marginLeft = "30px" display="inline-block">
+              <Button size="small" variant = 'outlined' color='secondary' marginleft = "30px" display="inline-block">
                 Selger
               </Button>
             </CardActions>
@@ -202,7 +204,7 @@ function usePosts(){
               return (
                 <div className={styles.annonseContainer}>
                 {allPosts.map((post) => 
-                    <Card className={classes.root}>  
+                    <Card className={classes.root} key={post.id}>  
                       <div>
                   <CardHeader 
                   classes={{
@@ -221,8 +223,10 @@ function usePosts(){
                   
               />
               <CardMedia
+                  component='img'
+                  image={post.imageUrl}
                   className={classes.media}
-                  image= {post.imageUrl}
+                  
               />
               
               <CardContent>
@@ -236,13 +240,13 @@ function usePosts(){
                   </Typography>
               </CardContent>
               <CardActions style={{height: "20px", }}>
-                <Button size="small" variant = 'outlined' color='secondary' marginRight = "30px" display="inline-block">
+                <Button size="small" variant = 'outlined' color='secondary' marginright = "30px" display="inline-block">
                   <Link href={'/annonse/'+post.id} passHref><a>Annonse</a></Link>
                 </Button>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <Button size="small" variant = 'outlined' color='secondary' marginLeft = "30px" display="inline-block">
+                <Button size="small" variant = 'outlined' color='secondary' marginleft = "30px" display="inline-block">
                   Selger
                 </Button>
               </CardActions>
