@@ -60,7 +60,7 @@ export default function AdCards() {
   const classes = useStyles();
   const [ad, setAd] = useState(null);
   let ads = [];
-  let i = 0;
+  let i = 1;
 
   useEffect(() => {
     getAds()
@@ -71,8 +71,6 @@ export default function AdCards() {
         setAd(ads[0]);
       });
     setInterval(function () {
-      console.log(i);
-      console.log(ads[i]);
       setAd(ads[i]);
       i = (i + 1) % ads.length;
     }, 10000);
