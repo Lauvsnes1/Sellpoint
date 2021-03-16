@@ -26,7 +26,6 @@ const CreateAd = () => {
               if (!doc.data().permissions.advertiser) {
                 router.push("/");
               } else {
-                console.log("setLoading");
                 setLoading(false);
               }
             }
@@ -35,21 +34,23 @@ const CreateAd = () => {
     });
   }, []);
 
-  const handleSubmit = (imageFile, imageSrc, link) => {
-    console.log("submit!!");
+  const handleSubmit = async (link, imageFile) => {
+    setLoading(true);
+    const storageImage = await FirebaseStorage.uploadImage(imageFile);
+
+    var document = await fire.firestore().collection("ads").add({
+      userID: user.uid,
+      link: link,
+      imageRef: storageImage.ref,
+      imageUrl: storageImage.url,
+    });
+
+    router.push("/");
   };
 
   if (loading) {
     return <h2>Loading...</h2>;
   }
-
-  // Create ad
-  /*
-var document = await fire.firestore().collection("ads").add({
-    link: link,
-    imageRef: imageRef
-  });
-*/
 
   return <AdForm handleSubmit={handleSubmit}></AdForm>;
 };

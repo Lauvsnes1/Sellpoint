@@ -61,7 +61,7 @@ const AdForm = ({ handleSubmit }) => {
         onSubmit={(e) => {
           e.preventDefault();
           if (validate()) {
-            handleSubmit(imageFile, imageSrc, link);
+            handleSubmit(link, imageFile);
           }
         }}
       >
