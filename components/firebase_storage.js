@@ -3,26 +3,26 @@ import fire from "../config/fire-config";
 
 const FirebaseStorage = () => {};
 
-FirebaseStorage.uploadImage = async (imageFile) => {
+FirebaseStorage.uploadImage = async (imageFile, directory) => {
   const ref = uniqid();
   const url = await fire
     .storage()
-    .ref("/images/" + ref)
+    .ref("/images/" + directory + "/" + ref)
     .put(imageFile)
     .then((res) => {
       return res.ref.getDownloadURL();
     });
   return {
-    ref: ref,
+    ref: directory + "/" + ref,
     url: url,
   };
 };
 
-FirebaseStorage.uploadImages = async (imageFiles) => {
+FirebaseStorage.uploadImages = async (imageFiles, directory) => {
   const imageRefs = [];
 
   for (const file of imageFiles) {
-    const ref = await FirebaseStorage.uploadImage(file);
+    const ref = await FirebaseStorage.uploadImage(file, directory);
     imageRefs.push(ref);
   }
   return imageRefs;
