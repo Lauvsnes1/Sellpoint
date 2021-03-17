@@ -7,13 +7,12 @@ import Button from "@material-ui/core/Button";
 import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
 import theme from "../src/theme";
-import { db } from "../config/fire-config";
 import firebase from "../config/fire-config";
 import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import styles from "../styles/Home.module.css";
-import { colors, ThemeProvider } from "@material-ui/core";
-import Image from "next/image";
+import { ThemeProvider } from "@material-ui/core";
+
 import Link from "next/link";
 
 const useStyles = makeStyles(() => ({
