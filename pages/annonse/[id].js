@@ -1,9 +1,10 @@
 import fire from "../../config/fire-config";
-import Image from "next/image";
 import AppBar from "../../components/header";
 import { useState } from "react";
 import { Button } from "@material-ui/core";
 import Link from "next/link";
+import ImageContainer from "../../components/image_container";
+import { useRouter } from "next/router";
 
 export async function getServerSideProps({ res, params }) {
   const documentData = await fire
@@ -44,12 +45,38 @@ export async function getServerSideProps({ res, params }) {
 }
 
 export default function Annonse({ data, userData, docid }) {
+  const router = useRouter();
   const [owner, setOwner] = useState(false);
+  const [admin, setAdmin] = useState(false);
   fire.auth().onAuthStateChanged((user) => {
     if (user) {
       setOwner(data.userID == user.uid);
+      fire
+        .firestore()
+        .collection("users")
+        .doc(user.uid)
+        .get()
+        .then((doc) => {
+          if (doc.exists) {
+            setAdmin(doc.data().permissions.admin);
+          }
+        });
     }
   });
+
+  const handleDelete = async () => {
+    const ref = fire.firestore().collection("posts").doc(docid);
+    const storageRef = fire
+      .storage()
+      .ref()
+      .child("/images/" + data.imageRef);
+    await storageRef.delete().catch((err) => console.log(err.code));
+    await ref
+      .delete()
+      .then(router.push("/"))
+      .catch((error) => console.log(error.code));
+  };
+
   return (
     <div>
       <style jsx>{`
@@ -85,10 +112,11 @@ export default function Annonse({ data, userData, docid }) {
         <div className="top-div">
           <h1>{data.title}</h1>
           <EditButton isOwner={owner} docid={docid} />
+          <DeleteButton isAdmin={admin} handleDelete={handleDelete} />
         </div>
-        <div style={{ position: "relative", width: "700px", height: "500px" }}>
-          <Image src={data.imageUrl} layout="fill" objectFit="contain" />
-        </div>
+        <ImageContainer
+          imageSrcs={data.imageRefs.map((imageRef) => imageRef.url)}
+        />
         <p>
           <span>Lokasjon: </span> {data.place}
         </p>
@@ -129,6 +157,24 @@ function EditButton(props) {
           </Button>
         </a>
       </Link>
+    );
+  } else {
+    return <></>;
+  }
+}
+
+function DeleteButton(props) {
+  const isAdmin = props.isAdmin;
+
+  if (isAdmin) {
+    return (
+      <Button
+        variant="outlined"
+        style={{ color: "#FF1744", borderColor: "#FF1744" }}
+        onClick={() => props.handleDelete()}
+      >
+        Delete
+      </Button>
     );
   } else {
     return <></>;

@@ -122,8 +122,7 @@ function SortByPrice(props){
         
     />
     <CardMedia
-        component='img'
-        image= {post.imageUrl}
+        image= {post.imageRefs[0].url}
         className={classes.media}
         
     />
@@ -178,10 +177,12 @@ function SortByPrice(props){
           subheader={post.place}
           
       />
+      {console.log(post.imageRefs[0].url)}
       <CardMedia
-          component='img'
-          image={post.imageUrl}
           className={classes.media}
+          //component='img'
+          image={post.imageRefs[0].url}
+          
           
       />
       
@@ -191,8 +192,6 @@ function SortByPrice(props){
           </Typography>
           <Typography style={{textAlign: "right"}}> 
             {post.price} kr
-
-            
           </Typography>
       </CardContent>
       <CardActions style={{height: "20px", }}>
@@ -262,4 +261,4 @@ function SortByPrice(props){
         export default PostCards
 
 
-        
+    
