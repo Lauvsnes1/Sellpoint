@@ -40,7 +40,7 @@ const CreatePost = () => {
     var document = await fire.firestore().collection("posts").add({
       title: title,
       place: location,
-      price: price,
+      price: parseInt(price,10),
       miniDescription: miniDescription,
       description: description,
       userID: user.uid,
