@@ -36,7 +36,10 @@ const CreateAd = () => {
 
   const handleSubmit = async (link, imageFile) => {
     setLoading(true);
-    const storageImage = await FirebaseStorage.uploadImage(imageFile);
+    const storageImage = await FirebaseStorage.uploadImage(
+      imageFile,
+      "reklameBilder"
+    );
 
     var document = await fire.firestore().collection("ads").add({
       userID: user.uid,
