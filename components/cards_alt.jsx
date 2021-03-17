@@ -71,6 +71,152 @@ function usePosts(){
   }, [])
   return posts
 }
+function SortByPrice(props){
+  const classes = useStyles();
+  const minValue = props.minValue;
+  const maxValue = props.maxValue;
+  const searchCounter = props.searchCounter;
+  const searched = props.searched;
+  const allPosts = usePosts();
+
+  const [posts, setPost] = useState([])
+  useEffect(() => {
+    console.log('minValue:', minValue,'maxValue:', maxValue);
+    firebase
+    .firestore()
+    .collection('posts')
+    .where('price','<=', maxValue)
+    .where('price','>=', minValue)
+    .orderBy('price','asc')
+    .onSnapshot((snapShot) => {
+      
+      const newPosts = snapShot.docs.map((doc) =>({
+        id: doc.id,
+        ...doc.data()
+
+      }) )
+      setPost(newPosts);
+    } )
+  
+  },[searchCounter])
+
+  if(searched){ //dersom 'søk' knappen er trykket
+    return (
+      <div className={styles.annonseContainer}>
+      {posts.map((post) => 
+          <Card className={classes.root} key={post.id}>  
+            <div>
+        <CardHeader 
+        classes={{
+          subheader: classes.subheader
+        }}
+
+        avatar={
+        <Avatar aria-label="recipe" className={classes.avatar}>
+        {/*firebase.firestore().collection('users').doc(post.userID).get().firstName*/}  
+        </Avatar>
+        } 
+    
+        title = {post.title}
+        subheader={post.place}
+        
+    />
+    <CardMedia
+        component='img'
+        image= {post.imageUrl}
+        className={classes.media}
+        
+    />
+    <CardContent>
+        <Typography variant="body2" color="textSecondary" component="p" style={{height: "25px", lineHeight: "25px", overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis"}}>
+        {post.miniDescription}
+        </Typography>
+        <Typography style={{textAlign: "right"}}> 
+          {post.price} kr
+
+          
+        </Typography>
+    </CardContent>
+    <CardActions style={{height: "20px", }}>
+      <Button size="small" variant = 'outlined' color='secondary' marginright = "30px" display="inline-block">
+        <Link href={'/annonse/'+post.id} passHref><a>Annonse</a></Link>
+      </Button>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <Button size="small" variant = 'outlined' color='secondary' marginleft = "30px" display="inline-block">
+        Selger
+      </Button>
+    </CardActions>
+
+  </div>
+    
+  </Card>
+)}
+  </div>
+    );
+    }
+    else{ //dersom søk-knappen ikke er trykka
+      return (
+        <div className={styles.annonseContainer}>
+        {allPosts.map((post) => 
+            <Card className={classes.root} key={post.id}>  
+              <div>
+          <CardHeader 
+          classes={{
+            subheader: classes.subheader
+          }}
+
+          avatar={
+          <Avatar aria-label="recipe" className={classes.avatar}>
+          {/*firebase.firestore().collection('users').doc(post.userID).get().firstName*/}  
+          </Avatar>
+          
+          } 
+      
+          title = {post.title}
+          subheader={post.place}
+          
+      />
+      <CardMedia
+          component='img'
+          image={post.imageUrl}
+          className={classes.media}
+          
+      />
+      
+      <CardContent>
+          <Typography variant="body2" color="textSecondary" component="p" style={{height: "25px", lineHeight: "25px", overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis"}}>
+          {post.miniDescription}
+          </Typography>
+          <Typography style={{textAlign: "right"}}> 
+            {post.price} kr
+
+            
+          </Typography>
+      </CardContent>
+      <CardActions style={{height: "20px", }}>
+        <Button size="small" variant = 'outlined' color='secondary' marginright = "30px" display="inline-block">
+          <Link href={'/annonse/'+post.id} passHref><a>Annonse</a></Link>
+        </Button>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <Button size="small" variant = 'outlined' color='secondary' marginleft = "30px" display="inline-block">
+          Selger
+        </Button>
+      </CardActions>
+
+    </div>
+      
+    </Card>
+)}
+    </div>
+      );
+
+    }
+ 
+  }
 
 
  const PostCards = () => {
@@ -83,7 +229,7 @@ function usePosts(){
 
   function handlePriceRange(){
     setSearchCounter(searchCounter+1);
-    setSearched(true); //Varsler for å sortere kortene
+    setSearched(true); //Varsler for å filtrere kortene
     setMaxValue(parseInt(maxValue,10)); //OBSOBS parseINT måtte til for å få riktig format på input
     setMinValue(parseInt(minValue,10));
   }
@@ -95,7 +241,7 @@ function usePosts(){
  }
       <div style={{paddingTop: 100}}>
         <Typography id="range-slider" gutterBottom >
-          Prisområde: {minValue} - {maxValue} 
+          Prisområde:
         </Typography>
         <div className={classes.textInputContainer} >
         <TextField value={minValue} id="outlined-basic" label="Min pris" variant="outlined" key={'1'} type='number' onChange={({target}) => setMinValue(target.value)} />
@@ -115,150 +261,5 @@ function usePosts(){
     
         export default PostCards
 
-        function SortByPrice(props){
-          const classes = useStyles();
-          const minValue = props.minValue;
-          const maxValue = props.maxValue;
-          const searchCounter = props.searchCounter;
-          const searched = props.searched;
-          const allPosts = usePosts();
 
-          const [posts, setPost] = useState([])
-          useEffect(() => {
-            console.log('minValue:', minValue,'maxValue:', maxValue);
-            firebase
-            .firestore()
-            .collection('posts')
-            .where('price','<=', maxValue)
-            .where('price','>=', minValue)
-            .orderBy('price','asc')
-            .onSnapshot((snapShot) => {
-              
-              const newPosts = snapShot.docs.map((doc) =>({
-                id: doc.id,
-                ...doc.data()
-        
-              }) )
-              setPost(newPosts);
-            } )
-          
-          },[searchCounter])
-
-          if(searched){ //dersom 'søk' knappen er trykket
-            return (
-              <div className={styles.annonseContainer}>
-              {posts.map((post) => 
-                  <Card className={classes.root} key={post.id}>  
-                    <div>
-                <CardHeader 
-                classes={{
-                  subheader: classes.subheader
-                }}
-
-                avatar={
-                <Avatar aria-label="recipe" className={classes.avatar}>
-                {/*firebase.firestore().collection('users').doc(post.userID).get().firstName*/}  
-                </Avatar>
-                } 
-            
-                title = {post.title}
-                subheader={post.place}
-                
-            />
-            <CardMedia
-                component='img'
-                image= {post.imageUrl}
-                className={classes.media}
-                
-            />
-            <CardContent>
-                <Typography variant="body2" color="textSecondary" component="p" style={{height: "25px", lineHeight: "25px", overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis"}}>
-                {post.miniDescription}
-                </Typography>
-                <Typography style={{textAlign: "right"}}> 
-                  {post.price} kr
-
-                  
-                </Typography>
-            </CardContent>
-            <CardActions style={{height: "20px", }}>
-              <Button size="small" variant = 'outlined' color='secondary' marginright = "30px" display="inline-block">
-                <Link href={'/annonse/'+post.id} passHref><a>Annonse</a></Link>
-              </Button>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <Button size="small" variant = 'outlined' color='secondary' marginleft = "30px" display="inline-block">
-                Selger
-              </Button>
-            </CardActions>
-
-          </div>
-            
-          </Card>
-    )}
-          </div>
-            );
-            }
-            else{ //dersom søk-knappen ikke er trykka
-              return (
-                <div className={styles.annonseContainer}>
-                {allPosts.map((post) => 
-                    <Card className={classes.root} key={post.id}>  
-                      <div>
-                  <CardHeader 
-                  classes={{
-                    subheader: classes.subheader
-                  }}
-  
-                  avatar={
-                  <Avatar aria-label="recipe" className={classes.avatar}>
-                  {/*firebase.firestore().collection('users').doc(post.userID).get().firstName*/}  
-                  </Avatar>
-                  
-                  } 
-              
-                  title = {post.title}
-                  subheader={post.place}
-                  
-              />
-              <CardMedia
-                  component='img'
-                  image={post.imageUrl}
-                  className={classes.media}
-                  
-              />
-              
-              <CardContent>
-                  <Typography variant="body2" color="textSecondary" component="p" style={{height: "25px", lineHeight: "25px", overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis"}}>
-                  {post.miniDescription}
-                  </Typography>
-                  <Typography style={{textAlign: "right"}}> 
-                    {post.price} kr
-  
-                    
-                  </Typography>
-              </CardContent>
-              <CardActions style={{height: "20px", }}>
-                <Button size="small" variant = 'outlined' color='secondary' marginright = "30px" display="inline-block">
-                  <Link href={'/annonse/'+post.id} passHref><a>Annonse</a></Link>
-                </Button>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <Button size="small" variant = 'outlined' color='secondary' marginleft = "30px" display="inline-block">
-                  Selger
-                </Button>
-              </CardActions>
-  
-            </div>
-              
-            </Card>
-      )}
-            </div>
-              );
-
-            }
-         
-          }
         
