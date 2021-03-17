@@ -14,6 +14,7 @@ import styles from "../styles/Home.module.css";
 import { colors, ThemeProvider } from "@material-ui/core";
 import Link from "next/link";
 import TextField from "@material-ui/core/TextField";
+import DropDown from "./placeDropDown";
 
 const useStyles = makeStyles(() => ({
   subheader: {
@@ -71,7 +72,6 @@ function SortByPrice(props) {
 
   const [posts, setPost] = useState([]);
   useEffect(() => {
-    console.log("minValue:", minValue, "maxValue:", maxValue);
     firebase
       .firestore()
       .collection("posts")
@@ -178,7 +178,7 @@ function SortByPrice(props) {
                 title={post.title}
                 subheader={post.place}
               />
-              {console.log(post.imageRefs[0].url)}
+
               <CardMedia
                 className={classes.media}
                 //component='img'
@@ -244,6 +244,7 @@ const PostCards = () => {
   const classes = useStyles();
   const [postId, setPostId] = useState(0);
   const [searched, setSearched] = useState(false);
+  const [city, setCity] = useState("");
 
   function handlePriceRange() {
     setSearchCounter(searchCounter + 1);
@@ -287,6 +288,9 @@ const PostCards = () => {
           >
             Søk
           </Button>
+        </div>
+        <div>
+          <DropDown city={city} valueChanged={setCity} />
         </div>
       </div>
       <SortByPrice
