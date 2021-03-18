@@ -1,10 +1,11 @@
 import fire from "../../config/fire-config";
 import AppBar from "../../components/header";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@material-ui/core";
 import Link from "next/link";
 import ImageContainer from "../../components/image_container";
 import { useRouter } from "next/router";
+import ToggleFavorite from "../../components/toggle_favorite";
 
 export async function getServerSideProps({ res, params }) {
   const documentData = await fire
@@ -48,9 +49,15 @@ export default function Annonse({ data, userData, docid }) {
   const router = useRouter();
   const [owner, setOwner] = useState(false);
   const [admin, setAdmin] = useState(false);
+  const [user, setUser] = useState(null);
+
+  const [isFavorite, setIsFavorite] = useState(false);
+
   fire.auth().onAuthStateChanged((user) => {
     if (user) {
+      setUser(user);
       setOwner(data.userID == user.uid);
+
       fire
         .firestore()
         .collection("users")
@@ -61,8 +68,39 @@ export default function Annonse({ data, userData, docid }) {
             setAdmin(doc.data().permissions.admin);
           }
         });
+
+      fire
+        .firestore()
+        .collection("favorites")
+        .doc(user.uid)
+        .get()
+        .then((doc) => {
+          if (doc.exists) {
+            setIsFavorite(doc.data().favoritesArray.includes(docid));
+          } else {
+            //create new favorites doc if it does not exist
+            fire.firestore().collection("favorites").doc(user.uid).set({
+              favoritesArray: [],
+            });
+          }
+        });
     }
   });
+
+  useEffect(() => {
+    if (!user) return;
+
+    //update favorites doc
+    fire
+      .firestore()
+      .collection("favorites")
+      .doc(user.uid)
+      .update({
+        favoritesArray: isFavorite
+          ? fire.firestore.FieldValue.arrayUnion(docid)
+          : fire.firestore.FieldValue.arrayRemove(docid),
+      });
+  }, [isFavorite]);
 
   const handleDelete = async () => {
     const ref = fire.firestore().collection("posts").doc(docid);
@@ -112,6 +150,7 @@ export default function Annonse({ data, userData, docid }) {
           <EditButton isOwner={owner} docid={docid} />
           <DeleteButton isAdmin={admin} handleDelete={handleDelete} />
         </div>
+        <ToggleFavorite isFavorite={isFavorite} setIsFavorite={setIsFavorite} />
         <ImageContainer
           imageSrcs={data.imageRefs.map((imageRef) => imageRef.url)}
         />
