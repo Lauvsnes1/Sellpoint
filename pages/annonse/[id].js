@@ -143,6 +143,8 @@ export default function Annonse({ data, userData, docid }) {
           align-items: center;
         }
       `}</style>
+      <div>
+      </div>
       <div className="container">
         <AppBar />
         <div className="top-div">

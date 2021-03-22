@@ -3,22 +3,28 @@ import AppBar from "../components/header";
 import PostCards from "../components/cards_alt";
 import fire from "../config/fire-config";
 import { useEffect, useState } from "react";
+import FilterPosts from "../components/filter_posts";
 
 export default function Home() {
   const [admin, setAdmin] = useState(false);
-  const [posts, setPosts] = useState([]);
+  //const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    fire
+    /*
+    firebase
       .firestore()
       .collection("posts")
+      .where("price", "<=", maxValue)
+      .where("price", ">=", minValue)
+      .orderBy("price", "asc")
       .onSnapshot((snapShot) => {
         const newPosts = snapShot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
-        setPosts(newPosts);
+        setPost(newPosts);
       });
+    */
 
     fire.auth().onAuthStateChanged((user) => {
       if (user) {
@@ -35,15 +41,18 @@ export default function Home() {
   });
 
   return (
-    <div className={styles.container}>
-      <AppBar />
-      <div className={styles.rad}>
-        <div className={styles.annonseContainer}>
-          <AdminHeadLine admin={admin} />
-          <PostCards posts={posts} />
+    <>
+      <div className={styles.container}>
+        <AppBar />
+        <div></div>
+        <div className={styles.rad}>
+          <div className={styles.annonseContainer}>
+            <AdminHeadLine admin={admin} />
+            <FilterPosts />
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
