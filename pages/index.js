@@ -7,25 +7,8 @@ import FilterPosts from "../components/filter_posts";
 
 export default function Home() {
   const [admin, setAdmin] = useState(false);
-  //const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    /*
-    firebase
-      .firestore()
-      .collection("posts")
-      .where("price", "<=", maxValue)
-      .where("price", ">=", minValue)
-      .orderBy("price", "asc")
-      .onSnapshot((snapShot) => {
-        const newPosts = snapShot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setPost(newPosts);
-      });
-    */
-
     fire.auth().onAuthStateChanged((user) => {
       if (user) {
         fire
