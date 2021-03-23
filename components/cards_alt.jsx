@@ -135,7 +135,9 @@ const PostCards = () => {
                   marginLeft="30px"
                   display="inline-block"
                 >
-                  Selger
+                  <Link href={"/brukerprofil/" + post.userID} passHref>
+                    <a>Selger</a>
+                  </Link>
                 </Button>
               </CardActions>
             </div>

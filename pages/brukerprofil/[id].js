@@ -6,6 +6,8 @@ import React from "react";
 import { render } from "react-dom";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 
 export async function getServerSideProps({ res, params }) {
   /*Finner riktig bruker og tilhørende data*/
@@ -39,20 +41,72 @@ export async function getServerSideProps({ res, params }) {
       }
     });
 
+  /*Finner ratings av brukeren*/
+  const userRatings = await fire
+    .firestore()
+    .collection("reviews")
+    .doc(userData.userID)
+    .get()
+    .then((doc) => {
+      if (doc.exists) {
+        return doc.data();
+      } else {
+        return "";
+      }
+    });
   return {
     props: {
       userid: params.id,
       userData: userData,
       userPosts: userPosts,
+      userRatings: userRatings,
     },
   };
 }
 
-const ratingChanged = (newRating) => {
-  console.log(newRating);
-};
-
 export default function UserProfile({ userid, userData, userPosts }) {
+  const [ratingScore, setRatingScore] = useState(0);
+  const [review, setReview] = useState("");
+  const [user, setUser] = useState(null);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    //Sets a firebase listener on initial render
+    fire.auth().onAuthStateChanged((user) => {
+      if (user) {
+        setUser(user);
+      } else {
+        //Redirects to login if user is not logged in
+        router.push("/users/login");
+      }
+    });
+  }, []);
+
+  const handleOnClick = async () => {
+    // Create review
+    var document = await fire.firestore().collection("reviews").add({
+      rating: ratingScore,
+      reviewText: review,
+      user: user.uid,
+      userReviewed: userid,
+    });
+    await fire
+      .firestore()
+      .collection("users")
+      .doc(userid)
+      .update({
+        numberOfRatings: userData.numberOfRatings + 1,
+      });
+    await fire
+      .firestore()
+      .collection("users")
+      .doc(userid)
+      .update({ totalRating: userData.totalRating + ratingScore });
+
+    router.reload();
+  };
+
   return (
     <div>
       <style jsx>{`
@@ -82,7 +136,7 @@ export default function UserProfile({ userid, userData, userPosts }) {
         }
         .annonseKort {
           display: flex;
-          flex-direction: row;
+          flex-direction: column;
         }
         .giveRating {
           position: fixed;
@@ -132,15 +186,18 @@ export default function UserProfile({ userid, userData, userPosts }) {
           <h4>Gi rating til bruker:</h4>
           <ReactStars
             count={5}
-            onChange={ratingChanged}
             size={32}
             activeColor="#ffd700"
             padding-bottom={10}
+            value={ratingScore}
+            onChange={(value) => setRatingScore(parseFloat(value))}
           />
           <TextField
             id="outlined-required"
             label="Tilbakemelding"
             variant="outlined"
+            value={review}
+            onChange={({ target }) => setReview(target.value)}
           />
 
           <Button
@@ -148,18 +205,23 @@ export default function UserProfile({ userid, userData, userPosts }) {
             color="secondary"
             variant="contained"
             type="submit"
+            onClick={handleOnClick}
           >
             Send inn rating
           </Button>
         </div>
-        <div className="annonser">
-          <h4>{userData.firstName + " " + userData.lastName}'s annonser:</h4>
-          <div className="annonseKort">
-            <PostCards />
-          </div>
-        </div>
         <div className="tidligereTilbakemeldinger">
-          <h4>Tidligere tilbakemeldinger:</h4>
+          {userData.numberOfRatings != 0 ? (
+            <h4>
+              Gjennomsnittlig rating:
+              {userData.totalRating / userData.numberOfRatings}
+            </h4>
+          ) : (
+            <h4>
+              Gjennomsnittlig rating:
+              {0}
+            </h4>
+          )}
         </div>
       </div>
     </div>

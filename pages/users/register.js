@@ -3,7 +3,7 @@ import fire from "../../config/fire-config";
 import { useRouter } from "next/router";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import Link from "next/link"
+import Link from "next/link";
 
 const Register = () => {
   const router = useRouter();
@@ -13,8 +13,8 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [passConf, setPassConf] = useState("");
   const [notification, setNotification] = useState("");
-  const [invalidEmail, setInvalidEmail] = useState("")
-  const [emailInUse, setEmailInUse] = useState("")
+  const [invalidEmail, setInvalidEmail] = useState("");
+  const [emailInUse, setEmailInUse] = useState("");
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -27,29 +27,39 @@ const Register = () => {
       setPassConf("");
       return null;
     }
-    await fire.auth().setPersistence(fire.auth.Auth.Persistence.LOCAL)
+    await fire.auth().setPersistence(fire.auth.Auth.Persistence.LOCAL);
     await fire
       .auth()
       .createUserWithEmailAndPassword(email, password)
       .then(({ user }) => {
-        const ref = fire.firestore().collection('users').doc(user.uid)
-        const permissions = {user: true}
-        ref.set({email, firstName, lastName,  permissions})
-      }).then(() => router.push("/")) 
+        const ref = fire.firestore().collection("users").doc(user.uid);
+        const permissions = { user: true };
+        const numberOfRatings = 0;
+        const totalRating = 0;
+        ref.set({
+          email,
+          firstName,
+          lastName,
+          permissions,
+          numberOfRatings,
+          totalRating,
+        });
+      })
+      .then(() => router.push("/"))
       .catch((err) => {
         if (err.code == "auth/email-already-in-use") {
-            setEmailInUse("Email already in use")
-            setTimeout(() => {
-                setEmailInUse("");
-              }, 2000);
+          setEmailInUse("Email already in use");
+          setTimeout(() => {
+            setEmailInUse("");
+          }, 2000);
         }
         if (err.code == "auth/invalid-email") {
-            setInvalidEmail("Invalid email");
-            setTimeout(() => {
-                setInvalidEmail("");
-              }, 2000);
+          setInvalidEmail("Invalid email");
+          setTimeout(() => {
+            setInvalidEmail("");
+          }, 2000);
         }
-        console.log(err)
+        console.log(err);
       });
   };
 
@@ -75,10 +85,10 @@ const Register = () => {
           margin: auto;
         }
         .buttons {
-            dislplay: flex;
+          dislplay: flex;
         }
         a {
-            text-decoration: none;
+          text-decoration: none;
         }
       `}</style>
       <h1>Opprett ny bruker</h1>
@@ -92,7 +102,7 @@ const Register = () => {
             label="E-post"
             variant="outlined"
             error={invalidEmail != "" || emailInUse != ""}
-            helperText = {invalidEmail + emailInUse}
+            helperText={invalidEmail + emailInUse}
           />
         </div>
         <div className="textfield">
@@ -143,19 +153,21 @@ const Register = () => {
           />
         </div>
         <div className="buttons">
-          <Button 
-          style={{width: '100%'}}
-          color="secondary" 
-          variant="contained" 
-          type="submit">
+          <Button
+            style={{ width: "100%" }}
+            color="secondary"
+            variant="contained"
+            type="submit"
+          >
             Registrer deg
           </Button>
           <Link href="/users/login">
             <a>
-              <Button 
-              style={{width: '100%', marginTop: '10px'}}
-              color="secondary" 
-              variant="outlined">
+              <Button
+                style={{ width: "100%", marginTop: "10px" }}
+                color="secondary"
+                variant="outlined"
+              >
                 Logg inn
               </Button>
             </a>
