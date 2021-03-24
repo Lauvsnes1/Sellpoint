@@ -6,6 +6,7 @@ import PostCards from "../components/cards_alt";
 import fire from "../config/fire-config";
 import { useEffect, useState } from "react";
 
+
 export default function Home() {
   const [admin, setAdmin] = useState(false);
   useEffect(() => {
@@ -22,8 +23,12 @@ export default function Home() {
   });
 
   return (
+    
+    <>
     <div className={styles.container}>
       <AppBar />
+      <div>
+      </div>
       <div className={styles.rad}>
         <div className={styles.annonseContainer}>
           <AdminHeadLine admin={admin} />
@@ -31,6 +36,7 @@ export default function Home() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 

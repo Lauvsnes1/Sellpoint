@@ -8,12 +8,12 @@ import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
 import theme from "../src/theme";
 import firebase from "../config/fire-config";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import styles from "../styles/Home.module.css";
-import { ThemeProvider } from "@material-ui/core";
-
+import { colors, ThemeProvider } from "@material-ui/core";
 import Link from "next/link";
+import TextField from "@material-ui/core/TextField";
 
 const useStyles = makeStyles(() => ({
   subheader: {
@@ -33,7 +33,7 @@ const useStyles = makeStyles(() => ({
   },
 
   button: {
-    paddingLeft: "100px",
+    paddingleft: "100px",
     outlineOffset: "100px",
   },
 
@@ -45,11 +45,12 @@ const useStyles = makeStyles(() => ({
 
 function usePosts() {
   const [posts, setPost] = useState([]);
-
   useEffect(() => {
     firebase
       .firestore()
       .collection("posts")
+      //.where('price', '>', priceContextMin)
+      //.where('price', '<', priceContextMax)
       .onSnapshot((snapShot) => {
         const newPosts = snapShot.docs.map((doc) => ({
           id: doc.id,
@@ -60,18 +61,38 @@ function usePosts() {
   }, []);
   return posts;
 }
-
-const PostCards = () => {
-  const posts = usePosts();
-
+function SortByPrice(props) {
   const classes = useStyles();
-  const [postId, setPostId] = useState("");
+  const minValue = props.minValue;
+  const maxValue = props.maxValue;
+  const searchCounter = props.searchCounter;
+  const searched = props.searched;
+  const allPosts = usePosts();
 
-  return (
-    <ThemeProvider theme={theme}>
+  const [posts, setPost] = useState([]);
+  useEffect(() => {
+    console.log("minValue:", minValue, "maxValue:", maxValue);
+    firebase
+      .firestore()
+      .collection("posts")
+      .where("price", "<=", maxValue)
+      .where("price", ">=", minValue)
+      .orderBy("price", "asc")
+      .onSnapshot((snapShot) => {
+        const newPosts = snapShot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setPost(newPosts);
+      });
+  }, [searchCounter]);
+
+  if (searched) {
+    //dersom 'søk' knappen er trykket
+    return (
       <div className={styles.annonseContainer}>
         {posts.map((post) => (
-          <Card className={classes.root}>
+          <Card className={classes.root} key={post.id}>
             <div>
               <CardHeader
                 classes={{
@@ -86,13 +107,83 @@ const PostCards = () => {
                 subheader={post.place}
               />
               <CardMedia
+                image={post.imageRefs[0].url}
                 className={classes.media}
+              />
+              <CardContent>
+                <Typography
+                  variant="body2"
+                  color="textSecondary"
+                  component="p"
+                  style={{
+                    height: "25px",
+                    lineHeight: "25px",
+                    overflow: "hidden",
+                    whiteSpace: "nowrap",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  {post.miniDescription}
+                </Typography>
+                <Typography style={{ textAlign: "right" }}>
+                  {post.price} kr
+                </Typography>
+              </CardContent>
+              <CardActions style={{ height: "20px" }}>
+                <Button
+                  size="small"
+                  variant="outlined"
+                  color="secondary"
+                  marginright="30px"
+                  display="inline-block"
+                >
+                  <Link href={"/annonse/" + post.id} passHref>
+                    <a>Annonse</a>
+                  </Link>
+                </Button>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <Button
+                  size="small"
+                  variant="outlined"
+                  color="secondary"
+                  marginleft="30px"
+                  display="inline-block"
+                >
+                  Selger
+                </Button>
+              </CardActions>
+            </div>
+          </Card>
+        ))}
+      </div>
+    );
+  } else {
+    //dersom søk-knappen ikke er trykka
+    return (
+      <div className={styles.annonseContainer}>
+        {allPosts.map((post) => (
+          <Card className={classes.root} key={post.id}>
+            <div>
+              <CardHeader
+                classes={{
+                  subheader: classes.subheader,
+                }}
+                avatar={
+                  <Avatar aria-label="recipe" className={classes.avatar}>
+                    {/*firebase.firestore().collection('users').doc(post.userID).get().firstName*/}
+                  </Avatar>
+                }
+                title={post.title}
+                subheader={post.place}
+              />
+              {console.log(post.imageRefs[0].url)}
+              <CardMedia
+                className={classes.media}
+                //component='img'
                 image={post.imageRefs[0].url}
               />
-
-              {/*<Image src="firebase.storage().ref('/images/' + post.imageRef).getDownloadURL()" //brukt til test
-              height='10px'
-                width='10px'/>*/}
 
               <CardContent>
                 <Typography
@@ -118,7 +209,7 @@ const PostCards = () => {
                   size="small"
                   variant="outlined"
                   color="secondary"
-                  marginRight="30px"
+                  marginright="30px"
                   display="inline-block"
                 >
                   <Link href={"/annonse/" + post.id} passHref>
@@ -132,7 +223,7 @@ const PostCards = () => {
                   size="small"
                   variant="outlined"
                   color="secondary"
-                  marginLeft="30px"
+                  marginleft="30px"
                   display="inline-block"
                 >
                   Selger
@@ -142,9 +233,70 @@ const PostCards = () => {
           </Card>
         ))}
       </div>
-    </ThemeProvider>
+    );
+  }
+}
 
-    //endelig formatering blir gjort når vi fikser koblingen til firebase
+const PostCards = () => {
+  const [minValue, setMinValue] = useState(0);
+  const [maxValue, setMaxValue] = useState(0);
+  const [searchCounter, setSearchCounter] = useState(0);
+  const classes = useStyles();
+  const [postId, setPostId] = useState(0);
+  const [searched, setSearched] = useState(false);
+
+  function handlePriceRange() {
+    setSearchCounter(searchCounter + 1);
+    setSearched(true); //Varsler for å filtrere kortene
+    setMaxValue(parseInt(maxValue, 10)); //OBSOBS parseINT måtte til for å få riktig format på input
+    setMinValue(parseInt(minValue, 10));
+  }
+
+  return (
+    <ThemeProvider theme={theme}>
+      {
+        //<PriceRangeSlider getValues={handleSlider}/>
+      }
+      <div style={{ paddingTop: 100 }}>
+        <Typography id="range-slider" gutterBottom>
+          Prisområde:
+        </Typography>
+        <div className={classes.textInputContainer}>
+          <TextField
+            value={minValue}
+            id="outlined-basic"
+            label="Min pris"
+            variant="outlined"
+            key={"1"}
+            type="number"
+            onChange={({ target }) => setMinValue(target.value)}
+          />
+          <TextField
+            value={maxValue}
+            id="outlined-basic"
+            label="Max pris"
+            variant="outlined"
+            key={"2"}
+            type="number"
+            onChange={({ target }) => setMaxValue(target.value)}
+          />
+          <Button
+            variant="contained"
+            onClick={handlePriceRange}
+            color="secondary"
+          >
+            Søk
+          </Button>
+        </div>
+      </div>
+      <SortByPrice
+        searched={searched}
+        maxValue={maxValue}
+        minValue={minValue}
+        searchCounter={searchCounter}
+      />
+      <div />
+    </ThemeProvider>
   );
 };
 
