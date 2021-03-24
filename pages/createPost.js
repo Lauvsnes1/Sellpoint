@@ -33,7 +33,8 @@ const CreatePost = () => {
     setLoading(true);
 
     const imageRefs = await FirebaseStorage.uploadImages(
-      images.map((image) => image.file)
+      images.map((image) => image.file),
+      "annonseBilder"
     );
 
     // Create post

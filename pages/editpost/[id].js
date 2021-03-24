@@ -31,7 +31,6 @@ export async function getServerSideProps({ res, params }) {
 }
 
 export default function Annonse({ data, id }) {
-  console.log(data);
   //keep track of deleted images so they can be deleted from firebase storage
   const deletedImageRefs = useRef([]);
 
@@ -88,7 +87,10 @@ export default function Annonse({ data, id }) {
     for (const image of images) {
       if (image.file) {
         // upload newly added images
-        const imageRef = await FirebaseStorage.uploadImage(image.file);
+        const imageRef = await FirebaseStorage.uploadImage(
+          image.file,
+          "annonseBilder"
+        );
         imageRefs.push(imageRef);
       } else {
         // old images are not uploaded again
