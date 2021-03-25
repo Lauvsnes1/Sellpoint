@@ -51,7 +51,8 @@ const AdForm = ({ handleSubmit }) => {
         }
       `}</style>
       {notification}
-      {imageSrc && <Image src={imageSrc} width={600} height={400} />}
+      {<div>(På nettsiden vil reklamen vises på formatet: 200x575)</div>}
+      {imageSrc && <Image src={imageSrc} width={200} height={575} />}
       <SingleImageUpload
         setImageFile={(imageFile) => setImageFile(imageFile)}
         setImageSrc={(imageSrc) => setImageSrc(imageSrc)}
