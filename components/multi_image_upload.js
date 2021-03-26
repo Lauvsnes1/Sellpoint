@@ -1,6 +1,6 @@
 import Button from "@material-ui/core/Button";
 
-const ImageUpload = ({ setImages, text }) => {
+const MultiImageUpload = ({ setImages, text }) => {
   const handleImageUpload = (e) => {
     const newImages = Array.from(e.target.files).map((file) => {
       return { file: file, src: null };
@@ -44,4 +44,4 @@ const ImageUpload = ({ setImages, text }) => {
   );
 };
 
-export default ImageUpload;
+export default MultiImageUpload;
