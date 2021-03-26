@@ -11,7 +11,7 @@ import firebase from "../config/fire-config";
 import React, { useContext, useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import styles from "../styles/Home.module.css";
-import { colors, ThemeProvider } from "@material-ui/core";
+import { ThemeProvider } from "@material-ui/core";
 import Link from "next/link";
 import TextField from "@material-ui/core/TextField";
 import DropDown from "./placeDropDown";
