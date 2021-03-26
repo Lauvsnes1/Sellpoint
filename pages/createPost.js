@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import PostForm from "../components/post_form";
 import FirebaseStorage from "../components/firebase_storage";
 
+
 const CreatePost = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -28,7 +29,8 @@ const CreatePost = () => {
     location,
     price,
     miniDescription,
-    description
+    description,
+    category
   ) => {
     setLoading(true);
 
@@ -46,6 +48,7 @@ const CreatePost = () => {
       description: description,
       userID: user.uid,
       imageRefs: imageRefs,
+      category: category
     });
 
     router.push("/annonse/" + document.id);
@@ -59,6 +62,7 @@ const CreatePost = () => {
     <div>
       <AppBar />
       <PostForm
+        initialCategory=""
         initialTitle=""
         initialLocation=""
         initialPrice={0}

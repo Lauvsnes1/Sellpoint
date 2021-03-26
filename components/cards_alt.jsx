@@ -11,9 +11,11 @@ import firebase from "../config/fire-config";
 import React, { useContext, useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import styles from "../styles/Home.module.css";
-import { colors, ThemeProvider } from "@material-ui/core";
+import { ThemeProvider } from "@material-ui/core";
 import Link from "next/link";
 import TextField from "@material-ui/core/TextField";
+import DropDownPlace from "./placeDropDown";
+import DropDownCategory from "./categoryDropDown"
 
 const useStyles = makeStyles(() => ({
   subheader: {
@@ -68,23 +70,33 @@ function SortByPrice(props) {
   const searchCounter = props.searchCounter;
   const searched = props.searched;
   const allPosts = usePosts();
+  const place = props.place;
+  const category = props.category;
 
   const [posts, setPost] = useState([]);
   useEffect(() => {
-    console.log("minValue:", minValue, "maxValue:", maxValue);
-    firebase
+    let query = firebase
       .firestore()
-      .collection("posts")
-      .where("price", "<=", maxValue)
-      .where("price", ">=", minValue)
-      .orderBy("price", "asc")
-      .onSnapshot((snapShot) => {
-        const newPosts = snapShot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setPost(newPosts);
-      });
+      .collection("posts");
+    if (maxValue > 0) {
+      query = query.where("price", "<=", maxValue)
+        .where("price", ">=", minValue).orderBy("price", "asc");
+    }
+    if (place != "") { 
+      query = query.where("place", "==", place); 
+    }
+    if (category != "") {
+      query = query.where("category", "==", category)
+    }
+
+
+    query.onSnapshot((snapShot) => {
+      const newPosts = snapShot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setPost(newPosts);
+    });
   }, [searchCounter]);
 
   if (searched) {
@@ -178,7 +190,7 @@ function SortByPrice(props) {
                 title={post.title}
                 subheader={post.place}
               />
-              {console.log(post.imageRefs[0].url)}
+
               <CardMedia
                 className={classes.media}
                 //component='img'
@@ -244,6 +256,8 @@ const PostCards = () => {
   const classes = useStyles();
   const [postId, setPostId] = useState(0);
   const [searched, setSearched] = useState(false);
+  const [city, setCity] = useState("");
+  const [category, setCategory] = useState("");
 
   function handlePriceRange() {
     setSearchCounter(searchCounter + 1);
@@ -288,12 +302,18 @@ const PostCards = () => {
             Søk
           </Button>
         </div>
+        <div style={{flexDirection: 'row'}}>
+          <DropDownPlace city={city} valueChanged={setCity} />
+          <DropDownCategory category ={category} valueChanged={setCategory}/>
+        </div>
       </div>
       <SortByPrice
         searched={searched}
         maxValue={maxValue}
         minValue={minValue}
         searchCounter={searchCounter}
+        place={city}
+        category={category}
       />
       <div />
     </ThemeProvider>
