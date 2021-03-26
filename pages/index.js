@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import Button from "@material-ui/core/Button";
 import Link from "next/link";
 
+
 export default function Home() {
   const [admin, setAdmin] = useState(false);
   const [advertiser, setAdvertiser] = useState(false);
@@ -42,6 +43,8 @@ export default function Home() {
   });
 
   return (
+    
+    <>
     <div className={styles.container}>
       <AppBar />
       <AddTable />
@@ -53,6 +56,7 @@ export default function Home() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 
