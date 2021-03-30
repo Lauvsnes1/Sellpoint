@@ -6,13 +6,8 @@ import CardActions from "@material-ui/core/CardActions";
 import Button from "@material-ui/core/Button";
 import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
-import theme from "../src/theme";
-import firebase from "../config/fire-config";
-import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import styles from "../styles/Home.module.css";
-import { ThemeProvider } from "@material-ui/core";
-
 import Link from "next/link";
 
 const useStyles = makeStyles(() => ({
@@ -33,7 +28,7 @@ const useStyles = makeStyles(() => ({
   },
 
   button: {
-    paddingLeft: "100px",
+    paddingleft: "100px",
     outlineOffset: "100px",
   },
 
@@ -43,110 +38,79 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-function usePosts() {
-  const [posts, setPost] = useState([]);
-
-  useEffect(() => {
-    firebase
-      .firestore()
-      .collection("posts")
-      .onSnapshot((snapShot) => {
-        const newPosts = snapShot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setPost(newPosts);
-      });
-  }, []);
-  return posts;
-}
-
-const PostCards = () => {
-  const posts = usePosts();
-
+const PostCards = ({ posts }) => {
   const classes = useStyles();
-  const [postId, setPostId] = useState("");
-
   return (
-    <ThemeProvider theme={theme}>
-      <div className={styles.annonseContainer}>
-        {posts.map((post) => (
-          <Card className={classes.root}>
-            <div>
-              <CardHeader
-                classes={{
-                  subheader: classes.subheader,
+    <div className={styles.annonseContainer}>
+      {posts.map((post) => (
+        <Card className={classes.root} key={post.id}>
+          <div>
+            <CardHeader
+              classes={{
+                subheader: classes.subheader,
+              }}
+              avatar={
+                <Avatar aria-label="recipe" className={classes.avatar}>
+                  {/*firebase.firestore().collection('users').doc(post.userID).get().firstName*/}
+                </Avatar>
+              }
+              title={post.title}
+              subheader={post.place}
+            />
+            <CardMedia
+              className={classes.media}
+              //component='img'
+              image={post.imageRefs[0].url}
+            />
+
+            <CardContent>
+              <Typography
+                variant="body2"
+                color="textSecondary"
+                component="p"
+                style={{
+                  height: "25px",
+                  lineHeight: "25px",
+                  overflow: "hidden",
+                  whiteSpace: "nowrap",
+                  textOverflow: "ellipsis",
                 }}
-                avatar={
-                  <Avatar aria-label="recipe" className={classes.avatar}>
-                    {/*firebase.firestore().collection('users').doc(post.userID).get().firstName*/}
-                  </Avatar>
-                }
-                title={post.title}
-                subheader={post.place}
-              />
-              <CardMedia
-                className={classes.media}
-                image={post.imageRefs[0].url}
-              />
-
-              {/*<Image src="firebase.storage().ref('/images/' + post.imageRef).getDownloadURL()" //brukt til test
-              height='10px'
-                width='10px'/>*/}
-
-              <CardContent>
-                <Typography
-                  variant="body2"
-                  color="textSecondary"
-                  component="p"
-                  style={{
-                    height: "25px",
-                    lineHeight: "25px",
-                    overflow: "hidden",
-                    whiteSpace: "nowrap",
-                    textOverflow: "ellipsis",
-                  }}
-                >
-                  {post.miniDescription}
-                </Typography>
-                <Typography style={{ textAlign: "right" }}>
-                  {post.price} kr
-                </Typography>
-              </CardContent>
-              <CardActions style={{ height: "20px" }}>
-                <Button
-                  size="small"
-                  variant="outlined"
-                  color="secondary"
-                  marginRight="30px"
-                  display="inline-block"
-                >
-                  <Link href={"/annonse/" + post.id} passHref>
-                    <a>Annonse</a>
-                  </Link>
-                </Button>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <Button
-                  size="small"
-                  variant="outlined"
-                  color="secondary"
-                  marginLeft="30px"
-                  display="inline-block"
-                >
-                  <Link href={"/brukerprofil/" + post.userID} passHref>
-                    <a>Selger</a>
-                  </Link>
-                </Button>
-              </CardActions>
-            </div>
-          </Card>
-        ))}
-      </div>
-    </ThemeProvider>
-
-    //endelig formatering blir gjort når vi fikser koblingen til firebase
+              >
+                {post.miniDescription}
+              </Typography>
+              <Typography style={{ textAlign: "right" }}>
+                {post.price} kr
+              </Typography>
+            </CardContent>
+            <CardActions style={{ height: "20px" }}>
+              <Button
+                size="small"
+                variant="outlined"
+                color="secondary"
+                marginright="30px"
+                display="inline-block"
+              >
+                <Link href={"/annonse/" + post.id} passHref>
+                  <a>Annonse</a>
+                </Link>
+              </Button>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <Button
+                size="small"
+                variant="outlined"
+                color="secondary"
+                marginleft="30px"
+                display="inline-block"
+              >
+                Selger
+              </Button>
+            </CardActions>
+          </div>
+        </Card>
+      ))}
+    </div>
   );
 };
 

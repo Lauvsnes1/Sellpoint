@@ -1,13 +1,13 @@
-import Head from "next/head";
 import styles from "../styles/Home.module.css";
 import AppBar from "../components/header";
-import Card from "../components/cards";
 import PostCards from "../components/cards_alt";
 import fire from "../config/fire-config";
 import { useEffect, useState } from "react";
+import FilterPosts from "../components/filter_posts";
 
 export default function Home() {
   const [admin, setAdmin] = useState(false);
+
   useEffect(() => {
     fire.auth().onAuthStateChanged((user) => {
       if (user) {
@@ -16,21 +16,26 @@ export default function Home() {
           .collection("users")
           .doc(user.uid)
           .get()
-          .then((doc) => setAdmin(doc.data()?.permissions.admin ? true : false));
+          .then((doc) =>
+            setAdmin(doc.data()?.permissions.admin ? true : false)
+          );
       }
     });
   });
 
   return (
-    <div className={styles.container}>
-      <AppBar />
-      <div className={styles.rad}>
-        <div className={styles.annonseContainer}>
-          <AdminHeadLine admin={admin} />
-          <PostCards />
+    <>
+      <div className={styles.container}>
+        <AppBar />
+        <div></div>
+        <div className={styles.rad}>
+          <div className={styles.annonseContainer}>
+            <AdminHeadLine admin={admin} />
+            <FilterPosts />
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
