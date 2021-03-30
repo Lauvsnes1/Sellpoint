@@ -138,6 +138,7 @@ export default function UserProfile({ userid, userData, userPosts }) {
           display: flex;
           flex-direction: column;
         }
+
         .giveRating {
           position: fixed;
           margin-left: 50rem;
@@ -182,6 +183,10 @@ export default function UserProfile({ userid, userData, userPosts }) {
             </a>
           </p>
         </div>
+        <div className="annonser">
+          <h3> {userData.firstName}'s annonser</h3>
+          <PostCards posts={userPosts} />
+        </div>
         <div className="giveRating">
           <h4>Gi rating til bruker:</h4>
           <ReactStars
@@ -214,12 +219,12 @@ export default function UserProfile({ userid, userData, userPosts }) {
           {userData.numberOfRatings != 0 ? (
             <h4>
               Gjennomsnittlig rating:
-              {userData.totalRating / userData.numberOfRatings}
+              {" " + userData.totalRating / userData.numberOfRatings}
             </h4>
           ) : (
             <h4>
               Gjennomsnittlig rating:
-              {0}
+              {" Ingen ratings"}
             </h4>
           )}
         </div>
