@@ -19,20 +19,26 @@ const MyFavorites = () => {
           .doc(user.uid)
           .get()
           .then((doc) => {
-            const favoritesId = doc.data().favoritesArray;
-            if (favoritesId.length) {
-              fire
-                .firestore()
-                .collection("posts")
-                .where(fire.firestore.FieldPath.documentId(), "in", favoritesId)
-                .onSnapshot((snapShot) => {
-                  const newFavorites = snapShot.docs.map((doc) => ({
-                    id: doc.id,
-                    ...doc.data(),
-                  }));
-                  console.log(newFavorites);
-                  setFavorites(newFavorites);
-                });
+            if (doc.data().favoritesArray) {
+              const favoritesId = doc.data().favoritesArray;
+              if (favoritesId.length) {
+                fire
+                  .firestore()
+                  .collection("posts")
+                  .where(
+                    fire.firestore.FieldPath.documentId(),
+                    "in",
+                    favoritesId
+                  )
+                  .onSnapshot((snapShot) => {
+                    const newFavorites = snapShot.docs.map((doc) => ({
+                      id: doc.id,
+                      ...doc.data(),
+                    }));
+                    console.log(newFavorites);
+                    setFavorites(newFavorites);
+                  });
+              }
             }
           });
       }

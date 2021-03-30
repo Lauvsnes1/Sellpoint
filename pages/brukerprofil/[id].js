@@ -1,6 +1,7 @@
 import fire from "../../config/fire-config";
 import AppBar from "../../components/header";
 import PostCards from "../../components/cards_alt";
+import RatingCards from "../../components/rating2";
 import ReactStars from "react-rating-stars-component";
 import React from "react";
 import { render } from "react-dom";
@@ -27,47 +28,20 @@ export async function getServerSideProps({ res, params }) {
       }
     });
 
-  /*Finner brukerens annonser*/
-  const userPosts = await fire
-    .firestore()
-    .collection("posts")
-    .doc(userData.userID)
-    .get()
-    .then((doc) => {
-      if (doc.exists) {
-        return doc.data();
-      } else {
-        return "";
-      }
-    });
-
-  /*Finner ratings av brukeren*/
-  const userRatings = await fire
-    .firestore()
-    .collection("reviews")
-    .doc(userData.userID)
-    .get()
-    .then((doc) => {
-      if (doc.exists) {
-        return doc.data();
-      } else {
-        return "";
-      }
-    });
   return {
     props: {
       userid: params.id,
       userData: userData,
-      userPosts: userPosts,
-      userRatings: userRatings,
     },
   };
 }
 
-export default function UserProfile({ userid, userData, userPosts }) {
+export default function UserProfile({ userid, userData }) {
   const [ratingScore, setRatingScore] = useState(0);
   const [review, setReview] = useState("");
   const [user, setUser] = useState(null);
+  const [posts, setPosts] = useState([]);
+  const [ratings, setRatings] = useState([]);
 
   const router = useRouter();
 
@@ -82,6 +56,34 @@ export default function UserProfile({ userid, userData, userPosts }) {
       }
     });
   }, []);
+
+  useEffect(() => {
+    fire
+      .firestore()
+      .collection("posts")
+      .where("userID", "==", userid)
+      .onSnapshot((snapShot) => {
+        const posts = snapShot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setPosts(posts);
+      });
+  });
+
+  useEffect(() => {
+    fire
+      .firestore()
+      .collection("reviews")
+      .where("userReviewed", "==", userid)
+      .onSnapshot((snapShot) => {
+        const reviews = snapShot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setRatings(reviews);
+      });
+  });
 
   const handleOnClick = async () => {
     // Create review
@@ -108,127 +110,145 @@ export default function UserProfile({ userid, userData, userPosts }) {
   };
 
   return (
-    <div>
-      <style jsx>{`
-        .container {
-          width: 80%;
-          max-width: 1000px;
-          margin: auto;
-          flex-direction: row;
-          justify-content: "flex-start";
-        }
-        h1 {
-          font-family: "helvetica neue";
-          font-size: 48pt;
-          font-weight: normal;
-          margin-top: 5rem;
-        }
-        .brukerInfo {
-          margin-left: 5rem;
-          position: fixed;
-        }
-        .annonser {
-          display: flex;
-          margin-top: 20rem;
-          position: fixed;
-          width: 150;
-          flex-direction: column;
-        }
-        .annonseKort {
-          display: flex;
-          flex-direction: column;
-        }
+    <>
+      <div>
+        <style jsx>{`
+          .container {
+            min-height: 100vh;
+            padding: 0 0.5rem;
+            width: 80%;
+            max-width: 1000px;
+            margin: auto;
+            flex-direction: row;
+            justify-content: "flex-start";
+          }
+          .rad{
+            margin: auto;
+            flex-direction: column;
+            justify-content: "flex-start";
+          }
+          h1 {
+            font-family: "helvetica neue";
+            font-size: 48pt;
+            font-weight: normal;
+            margin-top: 5rem;
+          }
+        
+          .annonseoverskrift {
+            display: flex;
+            margin-top: 15rem;
+            width: 150;
+            flex-direction: column;
+            align-self: "flex-start";
+            margin-left: 5rem;
+          }
+          .annonser {
+            display: flex;
+            position: fixed,
+            margin-top: 20rem;
+            width: 150;
+            flex-direction: column;
+            align-self: "flex-start";
+            margin-left: 5rem;
+          }
+          .annonseKort {
+            display: flex;
+            flex-direction: row;
+            margin-left: 0rem;
+            align-self: "flex-start";
+          }
+          .tidligereTilbakemeldinger {
+            margin-left: 50rem;
+            margin-top: 20rem;
+            margin-right: 5rem;
+            align-self: "flex-end";
+          }
+          span {
+            color: #90cc00;
+            font-weight: bold;
+          }
+          h3,
+          h4 {
+            color: #90cc00;
+            font-weight: bold;
+          }
+        `}</style>
+        <div className="container">
+          <div className="rad">
+            <div>
+              <AppBar />
+              <h1>Brukerprofil</h1>
+              <p>
+                <span>Navn: </span> {userData.firstName} {userData.lastName}
+              </p>
+              <p>
+                <span>Mail: </span>
+                <a
+                  href={
+                    `mailto:${userData.email}?subject=[Sellpoint]%20]` /*sjekk at denne funker*/
+                  }
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  {userData.email}
+                </a>
+              </p>
+            </div>
+            <div>
+              <h4>Gi rating til bruker:</h4>
+              <ReactStars
+                count={5}
+                size={32}
+                activeColor="#ffd700"
+                padding-bottom={10}
+                value={ratingScore}
+                onChange={(value) => setRatingScore(parseFloat(value))}
+              />
+              <TextField
+                id="outlined-required"
+                label="Tilbakemelding"
+                variant="outlined"
+                value={review}
+                onChange={({ target }) => setReview(target.value)}
+              />
 
-        .giveRating {
-          position: fixed;
-          margin-left: 50rem;
-          margin-top: 5rem;
-          margin-right: 5rem;
-          align-self: "flex-end";
-        }
-        .tidligereTilbakemeldinger {
-          position: fixed;
-          margin-left: 50rem;
-          margin-top: 20rem;
-          margin-right: 5rem;
-          align-self: "flex-end";
-        }
-        span {
-          color: #90cc00;
-          font-weight: bold;
-        }
-        h3,
-        h4 {
-          color: #90cc00;
-          font-weight: bold;
-        }
-      `}</style>
-      <div className="container">
-        <div className="brukerInfo">
-          <AppBar />
-          <h1>Brukerprofil</h1>
-          <p>
-            <span>Navn: </span> {userData.firstName} {userData.lastName}
-          </p>
-          <p>
-            <span>Mail: </span>
-            <a
-              href={
-                `mailto:${userData.email}?subject=[Sellpoint]%20]` /*sjekk at denne funker*/
-              }
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              {userData.email}
-            </a>
-          </p>
-        </div>
-        <div className="annonser">
-          <h3> {userData.firstName}'s annonser</h3>
-          <PostCards posts={userPosts} />
-        </div>
-        <div className="giveRating">
-          <h4>Gi rating til bruker:</h4>
-          <ReactStars
-            count={5}
-            size={32}
-            activeColor="#ffd700"
-            padding-bottom={10}
-            value={ratingScore}
-            onChange={(value) => setRatingScore(parseFloat(value))}
-          />
-          <TextField
-            id="outlined-required"
-            label="Tilbakemelding"
-            variant="outlined"
-            value={review}
-            onChange={({ target }) => setReview(target.value)}
-          />
+              <Button
+                style={{ width: "100%" }}
+                color="secondary"
+                variant="contained"
+                type="submit"
+                onClick={handleOnClick}
+              >
+                Send inn rating
+              </Button>
+            </div>
+          </div>
+          <div className="rad">
+            <div className="annonser">
+              <h3 className="annonseOverskrift">
+                {" "}
+                {userData.firstName}'s annonser
+              </h3>
+              <PostCards posts={posts} />
+            </div>
+            <div className="tidligereTilbakemeldinger">
+              {userData.numberOfRatings != 0 ? (
+                <h4>
+                  Gjennomsnittlig rating:
+                  {" " + userData.totalRating / userData.numberOfRatings}
+                </h4>
+              ) : (
+                <h4>
+                  Gjennomsnittlig rating:
+                  {" Ingen ratings"}
+                </h4>
+              )}
 
-          <Button
-            style={{ width: "100%" }}
-            color="secondary"
-            variant="contained"
-            type="submit"
-            onClick={handleOnClick}
-          >
-            Send inn rating
-          </Button>
-        </div>
-        <div className="tidligereTilbakemeldinger">
-          {userData.numberOfRatings != 0 ? (
-            <h4>
-              Gjennomsnittlig rating:
-              {" " + userData.totalRating / userData.numberOfRatings}
-            </h4>
-          ) : (
-            <h4>
-              Gjennomsnittlig rating:
-              {" Ingen ratings"}
-            </h4>
-          )}
+              <RatingCards ratings={ratings} />
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
