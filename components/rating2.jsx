@@ -22,6 +22,7 @@ const useStyles = makeStyles({
   },
 });
 
+
 const RatingCards = ({ ratings }) => {
   const classes = useStyles();
 
@@ -35,7 +36,8 @@ const RatingCards = ({ ratings }) => {
               {"Rating score: "+rating.rating}
             </Typography>
             <Typography variant="body2" component="p">
-              {"Gjort av: "+rating.user}
+              {"Gjort av: " + rating.user}
+              
               <br />
               {"Beskrivelse: "+rating.reviewText}
             </Typography>

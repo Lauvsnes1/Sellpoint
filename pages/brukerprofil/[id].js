@@ -87,7 +87,7 @@ export default function UserProfile({ userid, userData }) {
 
   const handleOnClick = async () => {
     // Create review
-    var document = await fire.firestore().collection("reviews").add({
+    await fire.firestore().collection("reviews").add({
       rating: ratingScore,
       reviewText: review,
       user: user.uid,
@@ -114,18 +114,29 @@ export default function UserProfile({ userid, userData }) {
       <div>
         <style jsx>{`
           .container {
+            display: flex;
             min-height: 100vh;
-            padding: 0 0.5rem;
             width: 80%;
             max-width: 1000px;
             margin: auto;
-            flex-direction: row;
-            justify-content: "flex-start";
-          }
-          .rad{
-            margin: auto;
             flex-direction: column;
-            justify-content: "flex-start";
+            padding-top: 100px;
+          }
+          .rad {
+            display: flex;
+            flex-direction: row;
+            margin: auto;
+          }
+          .element-left {
+            display: flex;
+            flex-direction: column;
+            align-self: flex-start;
+            flex: 1;
+          }
+          .element-right {
+            display: flex;
+            flex-direction: column;
+            align-self: flex-end;
           }
           h1 {
             font-family: "helvetica neue";
@@ -133,50 +144,17 @@ export default function UserProfile({ userid, userData }) {
             font-weight: normal;
             margin-top: 5rem;
           }
-        
-          .annonseoverskrift {
-            display: flex;
-            margin-top: 15rem;
-            width: 150;
-            flex-direction: column;
-            align-self: "flex-start";
-            margin-left: 5rem;
-          }
-          .annonser {
-            display: flex;
-            position: fixed,
-            margin-top: 20rem;
-            width: 150;
-            flex-direction: column;
-            align-self: "flex-start";
-            margin-left: 5rem;
-          }
-          .annonseKort {
-            display: flex;
-            flex-direction: row;
-            margin-left: 0rem;
-            align-self: "flex-start";
-          }
-          .tidligereTilbakemeldinger {
-            margin-left: 50rem;
-            margin-top: 20rem;
-            margin-right: 5rem;
-            align-self: "flex-end";
-          }
+          h3,
+          h4,
           span {
             color: #90cc00;
             font-weight: bold;
           }
-          h3,
-          h4 {
-            color: #90cc00;
-            font-weight: bold;
-          }
         `}</style>
+        <AppBar />
         <div className="container">
           <div className="rad">
-            <div>
-              <AppBar />
+            <div className="element-left">
               <h1>Brukerprofil</h1>
               <p>
                 <span>Navn: </span> {userData.firstName} {userData.lastName}
@@ -194,7 +172,13 @@ export default function UserProfile({ userid, userData }) {
                 </a>
               </p>
             </div>
-            <div>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <div className="element-right">
               <h4>Gi rating til bruker:</h4>
               <ReactStars
                 count={5}
@@ -211,7 +195,6 @@ export default function UserProfile({ userid, userData }) {
                 value={review}
                 onChange={({ target }) => setReview(target.value)}
               />
-
               <Button
                 style={{ width: "100%" }}
                 color="secondary"
@@ -224,14 +207,11 @@ export default function UserProfile({ userid, userData }) {
             </div>
           </div>
           <div className="rad">
-            <div className="annonser">
-              <h3 className="annonseOverskrift">
-                {" "}
-                {userData.firstName}'s annonser
-              </h3>
+            <div className="element-left">
+              <h3> {userData.firstName}'s annonser</h3>
               <PostCards posts={posts} />
             </div>
-            <div className="tidligereTilbakemeldinger">
+            <div className="element-right">
               {userData.numberOfRatings != 0 ? (
                 <h4>
                   Gjennomsnittlig rating:
@@ -243,7 +223,9 @@ export default function UserProfile({ userid, userData }) {
                   {" Ingen ratings"}
                 </h4>
               )}
-
+              <h4>
+                Tidligere ratings av {userData.firstName} ({userid}):
+              </h4>
               <RatingCards ratings={ratings} />
             </div>
           </div>
