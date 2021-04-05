@@ -172,7 +172,7 @@ export default function Annonse({ data, userData, docid }) {
         <p>
           <span>E-post: </span>
           <a
-            href={`mailto:${userData.email}?subject=[Selpoint]%20${data.title}`}
+            href={`mailto:${userData.email}?subject=[Sellpoint]%20${data.title}`}
             rel="noopener noreferrer"
             target="_blank"
           >

@@ -143,7 +143,13 @@ export default function ButtonAppBar() {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
               >
-                <MenuItem onClick={handleClose}>Profil</MenuItem>
+                <MenuItem onClick={handleClose}>
+                  {user && (
+                    <Link href={"/brukerprofil/" + user.uid} passHref>
+                      Profil
+                    </Link>
+                  )}
+                </MenuItem>
                 <MenuItem onClick={handelLogInChange} color="red">
                   {loggedInn}
                 </MenuItem>
