@@ -27,6 +27,8 @@ export async function getServerSideProps({ res, params }) {
       }
     });
 
+  console.log(userData.firstName);
+
   return {
     props: {
       userid: params.id,
@@ -41,7 +43,7 @@ export default function UserProfile({ userid, userData }) {
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
   const [ratings, setRatings] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const router = useRouter();
 
@@ -55,9 +57,7 @@ export default function UserProfile({ userid, userData }) {
         router.push("/users/login");
       }
     });
-  }, []);
-
-  useEffect(() => {
+    console.log(userid);
     fire
       .firestore()
       .collection("posts")
@@ -69,9 +69,6 @@ export default function UserProfile({ userid, userData }) {
         }));
         setPosts(posts);
       });
-  });
-
-  useEffect(() => {
     fire
       .firestore()
       .collection("reviews")
@@ -83,7 +80,8 @@ export default function UserProfile({ userid, userData }) {
         }));
         setRatings(reviews);
       });
-  });
+    setLoading(false);
+  }, []);
 
   const handleOnClick = async () => {
     setLoading(true);
@@ -180,33 +178,37 @@ export default function UserProfile({ userid, userData }) {
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <div className="element-right">
-              <h4>Gi rating til bruker:</h4>
-              <ReactStars
-                count={5}
-                size={32}
-                activeColor="#ffd700"
-                padding-bottom={10}
-                value={ratingScore}
-                onChange={(value) => setRatingScore(parseFloat(value))}
-              />
-              <TextField
-                id="outlined-required"
-                label="Tilbakemelding"
-                variant="outlined"
-                value={review}
-                onChange={({ target }) => setReview(target.value)}
-              />
-              <Button
-                style={{ width: "100%" }}
-                color="secondary"
-                variant="contained"
-                type="submit"
-                onClick={() => handleOnClick()}
-              >
-                Send inn rating
-              </Button>
-            </div>
+            {user && user.uid != userid ? (
+              <div className="element-right">
+                <h4>Gi rating til bruker:</h4>
+                <ReactStars
+                  count={5}
+                  size={32}
+                  activeColor="#ffd700"
+                  padding-bottom={10}
+                  value={ratingScore}
+                  onChange={(value) => setRatingScore(parseFloat(value))}
+                />
+                <TextField
+                  id="outlined-required"
+                  label="Tilbakemelding"
+                  variant="outlined"
+                  value={review}
+                  onChange={({ target }) => setReview(target.value)}
+                />
+                <Button
+                  style={{ width: "100%" }}
+                  color="secondary"
+                  variant="contained"
+                  type="submit"
+                  onClick={() => handleOnClick()}
+                >
+                  Send inn rating
+                </Button>
+              </div>
+            ) : (
+              <div className="element-right"></div>
+            )}
           </div>
           <div className="rad">
             <div className="element-left">
@@ -225,9 +227,7 @@ export default function UserProfile({ userid, userData }) {
               ) : (
                 <h4>Ingen ratings enda.</h4>
               )}
-              <h4>
-                Tidligere ratings av {userData.firstName} ({userid}):
-              </h4>
+              <h4>Tidligere ratings av {userData.firstName}:</h4>
               <RatingCards ratings={ratings} />
             </div>
           </div>
