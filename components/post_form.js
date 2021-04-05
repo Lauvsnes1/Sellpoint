@@ -1,10 +1,13 @@
 import { useState } from "react";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import ImageUpload from "../components/image_upload";
+import MultiImageUpload from "./multi_image_upload";
 import ImageContainer from "../components/image_container";
+import DropDownPlace from "./placeDropDown";
+import DropDownCategory from "./categoryDropDown";
 
 const PostForm = ({
+  initialCategory,
   initialTitle,
   initialLocation,
   initialPrice,
@@ -20,6 +23,7 @@ const PostForm = ({
   //maps ting etterhvert
   const [title, setTitle] = useState(initialTitle);
   const [location, setLocation] = useState(initialLocation);
+  const [category, setCategory] = useState(initialCategory);
   const [price, setPrice] = useState(initialPrice);
   const [miniDescription, setMiniDescription] = useState(
     initialMiniDescription
@@ -83,7 +87,7 @@ const PostForm = ({
         imageSrcs={images.map((image) => (image.src ? image.src : image.url))}
         deleteImage={deleteImage}
       />
-      <ImageUpload
+      <MultiImageUpload
         setImages={(images) => setImages(images)}
         text="Last opp bilde av varen"
       />
@@ -97,7 +101,8 @@ const PostForm = ({
               location,
               price,
               miniDescription,
-              description
+              description,
+              category
             );
           }
         }}
@@ -114,14 +119,8 @@ const PostForm = ({
           />
         </div>
         <div className="textfield">
-          <TextField
-            required
-            value={location}
-            onChange={({ target }) => setLocation(target.value)}
-            id="outlined-location"
-            label="Lokasjon"
-            variant="outlined"
-          />
+          <DropDownPlace city={location} valueChanged={setLocation}/>
+          <DropDownCategory category={category} valueChanged={setCategory}/>
         </div>
         <div className="textfield">
           <TextField

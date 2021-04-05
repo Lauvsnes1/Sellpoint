@@ -163,6 +163,9 @@ export default function Annonse({ data, userData, docid }) {
           <span>Pris: </span> {data.price} kr
         </p>
         <p>
+          <span>Kategori: </span> {data.category} 
+        </p>
+        <p>
           <span>Beskrivelse: </span>
           {data.description}
         </p>

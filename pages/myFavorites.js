@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import PostCards from "../components/cards_alt";
+import PostCards2 from "../components/cards_alt2";
 import fire from "../config/fire-config";
 import styles from "../styles/Home.module.css";
 import AppBar from "../components/header";
@@ -19,7 +19,7 @@ const MyFavorites = () => {
           .doc(user.uid)
           .get()
           .then((doc) => {
-            if (doc.data().favoritesArray) {
+            if (doc.data()) {
               const favoritesId = doc.data().favoritesArray;
               if (favoritesId.length) {
                 fire
@@ -62,7 +62,7 @@ const MyFavorites = () => {
           <h1> Dine favoritter </h1>
           <div className={styles.rad}>
             <div className={styles.annonseContainer}>
-              <PostCards posts={favorites} />
+              <PostCards2 posts={favorites} />
             </div>
           </div>
         </>
