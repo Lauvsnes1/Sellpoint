@@ -86,25 +86,23 @@ export default function UserProfile({ userid, userData }) {
   });
 
   const handleOnClick = async () => {
+    const fb = fire.firestore();
+
     // Create review
-    await fire.firestore().collection("reviews").add({
+    await fb.collection("reviews").add({
       rating: ratingScore,
       reviewText: review,
       user: user.uid,
       userReviewed: userid,
     });
-    await fire
-      .firestore()
+
+    await fb
       .collection("users")
       .doc(userid)
       .update({
-        numberOfRatings: userData.numberOfRatings + 1,
+        numberOfRatings: fb.FieldValue.increment(1),
+        totalRating: fb.FieldValue.increment(ratingScore),
       });
-    await fire
-      .firestore()
-      .collection("users")
-      .doc(userid)
-      .update({ totalRating: userData.totalRating + ratingScore });
 
     router.reload();
   };
@@ -200,7 +198,7 @@ export default function UserProfile({ userid, userData }) {
                 color="secondary"
                 variant="contained"
                 type="submit"
-                onClick={handleOnClick}
+                onClick={() => handleOnClick()}
               >
                 Send inn rating
               </Button>
@@ -218,10 +216,7 @@ export default function UserProfile({ userid, userData }) {
                   {" " + userData.totalRating / userData.numberOfRatings}
                 </h4>
               ) : (
-                <h4>
-                  Gjennomsnittlig rating:
-                  {" Ingen ratings"}
-                </h4>
+                <h4>Ingen ratings enda.</h4>
               )}
               <h4>
                 Tidligere ratings av {userData.firstName} ({userid}):
