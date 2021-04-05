@@ -27,8 +27,6 @@ export async function getServerSideProps({ res, params }) {
       }
     });
 
-  console.log(userData.firstName);
-
   return {
     props: {
       userid: params.id,
@@ -50,6 +48,7 @@ export default function UserProfile({ userid, userData }) {
   useEffect(() => {
     //Sets a firebase listener on initial render
     fire.auth().onAuthStateChanged((user) => {
+      console.log(user);
       if (user) {
         setUser(user);
       } else {
@@ -57,7 +56,7 @@ export default function UserProfile({ userid, userData }) {
         router.push("/users/login");
       }
     });
-    console.log(userid);
+
     fire
       .firestore()
       .collection("posts")
@@ -81,7 +80,7 @@ export default function UserProfile({ userid, userData }) {
         setRatings(reviews);
       });
     setLoading(false);
-  }, []);
+  }, [router.asPath]);
 
   const handleOnClick = async () => {
     setLoading(true);
