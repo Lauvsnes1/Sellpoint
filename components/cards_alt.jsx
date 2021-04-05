@@ -15,7 +15,7 @@ import { ThemeProvider } from "@material-ui/core";
 import Link from "next/link";
 import TextField from "@material-ui/core/TextField";
 import DropDownPlace from "./placeDropDown";
-import DropDownCategory from "./categoryDropDown"
+import DropDownCategory from "./categoryDropDown";
 
 const useStyles = makeStyles(() => ({
   subheader: {
@@ -75,20 +75,19 @@ function SortByPrice(props) {
 
   const [posts, setPost] = useState([]);
   useEffect(() => {
-    let query = firebase
-      .firestore()
-      .collection("posts");
+    let query = firebase.firestore().collection("posts");
     if (maxValue > 0) {
-      query = query.where("price", "<=", maxValue)
-        .where("price", ">=", minValue).orderBy("price", "asc");
+      query = query
+        .where("price", "<=", maxValue)
+        .where("price", ">=", minValue)
+        .orderBy("price", "asc");
     }
-    if (place != "") { 
-      query = query.where("place", "==", place); 
+    if (place != "") {
+      query = query.where("place", "==", place);
     }
     if (category != "") {
-      query = query.where("category", "==", category)
+      query = query.where("category", "==", category);
     }
-
 
     query.onSnapshot((snapShot) => {
       const newPosts = snapShot.docs.map((doc) => ({
@@ -302,9 +301,9 @@ const PostCards = () => {
             Søk
           </Button>
         </div>
-        <div style={{flexDirection: 'row'}}>
+        <div style={{ flexDirection: "row" }}>
           <DropDownPlace city={city} valueChanged={setCity} />
-          <DropDownCategory category ={category} valueChanged={setCategory}/>
+          <DropDownCategory category={category} valueChanged={setCategory} />
         </div>
       </div>
       <SortByPrice

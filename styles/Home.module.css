@@ -36,7 +36,7 @@
 }
 
 .title a {
-  color: #0070f3;
+  color: #020202;
   text-decoration: none;
 }
 
@@ -81,6 +81,19 @@
 }
 
 .annonseContainer {
+  /*display: flex;
+  align-items: flex-start;
+  align-self: center;
+  width: 850px;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  max-width: 850px;
+  min-width: 850px;
+  justify-content: space-around;
+  align-content: space-around;
+  flex-wrap: wrap;
+  margin-bottom: 20px;*/
   align-self: center;
   width: 850px;
   display: flex;

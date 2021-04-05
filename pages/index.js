@@ -1,18 +1,16 @@
-import Head from "next/head";
 import styles from "../styles/Home.module.css";
 import AppBar from "../components/header";
 import AddTable from "../components/ad";
-import Card from "../components/cards";
 import PostCards from "../components/cards_alt";
 import fire from "../config/fire-config";
 import { useEffect, useState } from "react";
 import Button from "@material-ui/core/Button";
 import Link from "next/link";
 
-
 export default function Home() {
   const [admin, setAdmin] = useState(false);
   const [advertiser, setAdvertiser] = useState(false);
+
   useEffect(() => {
     fire.auth().onAuthStateChanged((user) => {
       if (user) {
@@ -21,41 +19,27 @@ export default function Home() {
           .collection("users")
           .doc(user.uid)
           .get()
-          .then((doc) =>
-            setAdmin(doc.data()?.permissions.admin ? true : false)
-          );
-      }
-    });
-  });
-  useEffect(() => {
-    fire.auth().onAuthStateChanged((user) => {
-      if (user) {
-        fire
-          .firestore()
-          .collection("users")
-          .doc(user.uid)
-          .get()
-          .then((doc) =>
-            setAdvertiser(doc.data()?.permissions.advertiser ? true : false)
-          );
+          .then((doc) => {
+            setAdmin(doc.data()?.permissions.admin ? true : false);
+            setAdvertiser(doc.data()?.permissions.advertiser ? true : false);
+          });
       }
     });
   });
 
   return (
-    
     <>
-    <div className={styles.container}>
-      <AppBar />
-      <AddTable />
-      <div className={styles.rad}>
-        <div className={styles.annonseContainer}>
-          <AdminHeadLine admin={admin} />
-          <AdvertiserHeadLine advertiser={advertiser} />
-          <PostCards />
+      <div className={styles.container}>
+        <AppBar />
+        <AddTable />
+        <div className={styles.rad}>
+          <div className={styles.annonseContainer}>
+            <AdminHeadLine admin={admin} />
+            <AdvertiserHeadLine advertiser={advertiser} />
+            <PostCards />
+          </div>
         </div>
       </div>
-    </div>
     </>
   );
 }

@@ -47,7 +47,6 @@ export default function ButtonAppBar() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const router = useRouter();
 
-
   useEffect(() => {
     //Sets a firebase listener on initial render
     fire.auth().onAuthStateChanged((user) => {
@@ -116,7 +115,16 @@ export default function ButtonAppBar() {
                 <Link href={"/createPost"}>Opprett annonse</Link>
               </Button>
               <Button className={classes.button}> Mine annonser</Button>
-              <Button className={classes.button}> Mine favoritter</Button>
+              <Button
+                className={classes.button}
+                onClick={(e) => {
+                  e.preventDefault();
+                  router.push("/myFavorites");
+                }}
+              >
+                {" "}
+                Mine favoritter
+              </Button>
               <Button
                 className={classes.button}
                 variant="outlined"
