@@ -1,6 +1,6 @@
 import fire from "../../config/fire-config";
 import AppBar from "../../components/header";
-import PostCards from "../../components/cards_alt";
+import PostCards from "../../components/cards_alt2";
 import RatingCards from "../../components/rating";
 import ReactStars from "react-rating-stars-component";
 import React from "react";
