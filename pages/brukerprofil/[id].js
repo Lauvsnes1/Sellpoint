@@ -1,10 +1,9 @@
 import fire from "../../config/fire-config";
 import AppBar from "../../components/header";
 import PostCards from "../../components/cards_alt";
-import RatingCards from "../../components/rating2";
+import RatingCards from "../../components/rating";
 import ReactStars from "react-rating-stars-component";
 import React from "react";
-import { render } from "react-dom";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { useState, useEffect } from "react";
@@ -42,6 +41,7 @@ export default function UserProfile({ userid, userData }) {
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
   const [ratings, setRatings] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const router = useRouter();
 
@@ -86,6 +86,7 @@ export default function UserProfile({ userid, userData }) {
   });
 
   const handleOnClick = async () => {
+    setLoading(true);
     const fb = fire.firestore();
 
     // Create review
@@ -106,6 +107,9 @@ export default function UserProfile({ userid, userData }) {
 
     router.reload();
   };
+  if (loading) {
+    return <h2>Loading...</h2>;
+  }
 
   return (
     <>
@@ -213,7 +217,10 @@ export default function UserProfile({ userid, userData }) {
               {userData.numberOfRatings != 0 ? (
                 <h4>
                   Gjennomsnittlig rating:
-                  {" " + userData.totalRating / userData.numberOfRatings}
+                  {" " +
+                    (userData.totalRating / userData.numberOfRatings).toFixed(
+                      2
+                    )}
                 </h4>
               ) : (
                 <h4>Ingen ratings enda.</h4>
