@@ -30,7 +30,6 @@ const MyFavorites = () => {
                     id: doc.id,
                     ...doc.data(),
                   }));
-                  console.log(newFavorites);
                   setFavorites(newFavorites);
                 });
             }
@@ -41,12 +40,29 @@ const MyFavorites = () => {
 
   return (
     <div className={styles.container}>
+      <style jsx>{`
+        h1 {
+          font-family: "helvetica neue";
+          font-size: 48pt;
+          font-weight: normal;
+          margin-top: 5rem;
+          padding-top: 100px;
+        }
+      `}</style>
+
       <AppBar />
-      <div className={styles.rad}>
-        <div className={styles.annonseContainer}>
-          <PostCards posts={favorites} />
-        </div>
-      </div>
+      {favorites.length ? (
+        <>
+          <h1> Dine favoritter </h1>
+          <div className={styles.rad}>
+            <div className={styles.annonseContainer}>
+              <PostCards posts={favorites} />
+            </div>
+          </div>
+        </>
+      ) : (
+        <h1> Du har ingen favoritter</h1>
+      )}
     </div>
   );
 };

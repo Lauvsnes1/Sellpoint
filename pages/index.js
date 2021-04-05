@@ -1,6 +1,5 @@
 import styles from "../styles/Home.module.css";
 import AppBar from "../components/header";
-import PostCards from "../components/cards_alt";
 import fire from "../config/fire-config";
 import { useEffect, useState } from "react";
 import FilterPosts from "../components/filter_posts";
