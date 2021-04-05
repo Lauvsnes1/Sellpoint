@@ -100,8 +100,8 @@ export default function UserProfile({ userid, userData }) {
       .collection("users")
       .doc(userid)
       .update({
-        numberOfRatings: fb.FieldValue.increment(1),
-        totalRating: fb.FieldValue.increment(ratingScore),
+        numberOfRatings: fire.firestore.FieldValue.increment(1),
+        totalRating: fire.firestore.FieldValue.increment(ratingScore),
       });
 
     router.reload();
