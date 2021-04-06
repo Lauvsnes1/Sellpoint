@@ -22,7 +22,6 @@ const useStyles = makeStyles({
   },
 });
 
-
 const RatingCards = ({ ratings }) => {
   const classes = useStyles();
 
@@ -31,14 +30,10 @@ const RatingCards = ({ ratings }) => {
       {ratings.map((rating) => (
         <Card className={classes.root} variant="outlined">
           <CardContent>
-            <Typography variant="h5" component="h2"></Typography>
             <Typography className={classes.pos}>
               {"Rating score: "+rating.rating}
             </Typography>
             <Typography variant="body2" component="p">
-              {"Gjort av: " + rating.user}
-              
-              <br />
               {"Beskrivelse: "+rating.reviewText}
             </Typography>
           </CardContent>

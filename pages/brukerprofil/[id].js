@@ -1,10 +1,9 @@
 import fire from "../../config/fire-config";
 import AppBar from "../../components/header";
-import PostCards from "../../components/cards_alt";
-import RatingCards from "../../components/rating2";
+import PostCards from "../../components/cards_alt2";
+import RatingCards from "../../components/rating";
 import ReactStars from "react-rating-stars-component";
 import React from "react";
-import { render } from "react-dom";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { useState, useEffect } from "react";
@@ -42,12 +41,14 @@ export default function UserProfile({ userid, userData }) {
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
   const [ratings, setRatings] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const router = useRouter();
 
   useEffect(() => {
     //Sets a firebase listener on initial render
     fire.auth().onAuthStateChanged((user) => {
+      console.log(user);
       if (user) {
         setUser(user);
       } else {
@@ -55,9 +56,7 @@ export default function UserProfile({ userid, userData }) {
         router.push("/users/login");
       }
     });
-  }, []);
 
-  useEffect(() => {
     fire
       .firestore()
       .collection("posts")
@@ -69,9 +68,6 @@ export default function UserProfile({ userid, userData }) {
         }));
         setPosts(posts);
       });
-  });
-
-  useEffect(() => {
     fire
       .firestore()
       .collection("reviews")
@@ -83,31 +79,34 @@ export default function UserProfile({ userid, userData }) {
         }));
         setRatings(reviews);
       });
-  });
+    setLoading(false);
+  }, [router.asPath]);
 
   const handleOnClick = async () => {
+    setLoading(true);
+    const fb = fire.firestore();
+
     // Create review
-    await fire.firestore().collection("reviews").add({
+    await fb.collection("reviews").add({
       rating: ratingScore,
       reviewText: review,
       user: user.uid,
       userReviewed: userid,
     });
-    await fire
-      .firestore()
+
+    await fb
       .collection("users")
       .doc(userid)
       .update({
-        numberOfRatings: userData.numberOfRatings + 1,
+        numberOfRatings: fire.firestore.FieldValue.increment(1),
+        totalRating: fire.firestore.FieldValue.increment(ratingScore),
       });
-    await fire
-      .firestore()
-      .collection("users")
-      .doc(userid)
-      .update({ totalRating: userData.totalRating + ratingScore });
 
     router.reload();
   };
+  if (loading) {
+    return <h2>Loading...</h2>;
+  }
 
   return (
     <>
@@ -178,33 +177,37 @@ export default function UserProfile({ userid, userData }) {
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <div className="element-right">
-              <h4>Gi rating til bruker:</h4>
-              <ReactStars
-                count={5}
-                size={32}
-                activeColor="#ffd700"
-                padding-bottom={10}
-                value={ratingScore}
-                onChange={(value) => setRatingScore(parseFloat(value))}
-              />
-              <TextField
-                id="outlined-required"
-                label="Tilbakemelding"
-                variant="outlined"
-                value={review}
-                onChange={({ target }) => setReview(target.value)}
-              />
-              <Button
-                style={{ width: "100%" }}
-                color="secondary"
-                variant="contained"
-                type="submit"
-                onClick={handleOnClick}
-              >
-                Send inn rating
-              </Button>
-            </div>
+            {user && user.uid != userid ? (
+              <div className="element-right">
+                <h4>Gi rating til bruker:</h4>
+                <ReactStars
+                  count={5}
+                  size={32}
+                  activeColor="#ffd700"
+                  padding-bottom={10}
+                  value={ratingScore}
+                  onChange={(value) => setRatingScore(parseFloat(value))}
+                />
+                <TextField
+                  id="outlined-required"
+                  label="Tilbakemelding"
+                  variant="outlined"
+                  value={review}
+                  onChange={({ target }) => setReview(target.value)}
+                />
+                <Button
+                  style={{ width: "100%" }}
+                  color="secondary"
+                  variant="contained"
+                  type="submit"
+                  onClick={() => handleOnClick()}
+                >
+                  Send inn rating
+                </Button>
+              </div>
+            ) : (
+              <div className="element-right"></div>
+            )}
           </div>
           <div className="rad">
             <div className="element-left">
@@ -215,17 +218,15 @@ export default function UserProfile({ userid, userData }) {
               {userData.numberOfRatings != 0 ? (
                 <h4>
                   Gjennomsnittlig rating:
-                  {" " + userData.totalRating / userData.numberOfRatings}
+                  {" " +
+                    (userData.totalRating / userData.numberOfRatings).toFixed(
+                      2
+                    )}
                 </h4>
               ) : (
-                <h4>
-                  Gjennomsnittlig rating:
-                  {" Ingen ratings"}
-                </h4>
+                <h4>Ingen ratings enda.</h4>
               )}
-              <h4>
-                Tidligere ratings av {userData.firstName} ({userid}):
-              </h4>
+              <h4>Tidligere ratings av {userData.firstName}:</h4>
               <RatingCards ratings={ratings} />
             </div>
           </div>
