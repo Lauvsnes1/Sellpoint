@@ -73,7 +73,7 @@ export default function AdCards() {
     setInterval(function () {
       setAd(ads[i]);
       i = (i + 1) % ads.length;
-    }, 10000);
+    }, 3000);
   }, []);
 
   if (ad) {
